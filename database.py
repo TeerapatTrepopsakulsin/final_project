@@ -7,12 +7,12 @@ import copy
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-persons = []
-with open(os.path.join(__location__, 'persons.csv')) as f:
-    rows = csv.DictReader(f)
-    for r in rows:
-        persons.append(dict(r))
-print(persons)
+# persons = []
+# with open(os.path.join(__location__, 'persons.csv')) as f:
+#     rows = csv.DictReader(f)
+#     for r in rows:
+#         persons.append(dict(r))
+# print(persons)
 
 # add in code for a Database class
 
@@ -50,6 +50,9 @@ class Table:
             rows = csv.DictReader(f)
             for r in rows:
                 self.table.append(dict(r))
+
+    def update(self, values=dict):
+        self.table.append(values)
 
     def join(self, other_table, common_key):
         joined_table = Table(self.table_name + '_joins_' + other_table.table_name, [])
@@ -99,3 +102,8 @@ class Table:
 
     def __str__(self):
         return self.table_name + ':' + str(self.table)
+
+
+persons = Table('persons')
+persons.insert('persons.csv')
+print(persons.table)
