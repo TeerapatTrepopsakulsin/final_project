@@ -1,9 +1,30 @@
-# import database module
+import database
 
-# define a funcion called initializing
+# define a function called initializing
 
 def initializing():
-    pass
+    DB = database.Database()
+
+    persons = database.Table('persons')
+    persons.insert('persons.csv')
+    DB.insert(persons)
+
+    global login_table
+    login_table = database.Table('login')
+    login_table.insert('login.csv')
+    print(login_table.table)
+    DB.insert(login_table)
+
+    project = database.Table('project')
+    DB.insert(project)
+
+    advisor_pending_request = database.Table('advisor_pending_request')
+    DB.insert(advisor_pending_request)
+
+    member_pending_request = database.Table('member_pending_request')
+    DB.insert(member_pending_request)
+
+
 
 # here are things to do in this function:
 
@@ -14,12 +35,18 @@ def initializing():
     # see the guide how many tables are needed
 
     # add all these tables to the database
+initializing()
 
-
-# define a funcion called login
+# define a function called login
 
 def login():
-    pass
+    username = input('Enter username: ')
+    password = input('Enter password: ')
+    for i in login_table.table:
+        if username == i['username'] and password == i['password']:
+            return [i['ID'], i['role']]
+    return None
+
 
 # here are things to do in this function:
    # add code that performs a login task
@@ -57,5 +84,5 @@ val = login()
 # elif val[1] = 'advisor':
     # see and do advisor related activities
 
-# once everyhthing is done, make a call to the exit function
+# once everything is done, make a call to the exit function
 exit()

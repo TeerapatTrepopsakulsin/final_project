@@ -4,8 +4,6 @@ import csv
 import os
 import copy
 
-__location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # persons = []
 # with open(os.path.join(__location__, 'persons.csv')) as f:
@@ -46,6 +44,9 @@ class Table:
         self.table = []
 
     def insert(self, csv_file=str):
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
         with open(os.path.join(__location__, csv_file)) as f:
             rows = csv.DictReader(f)
             for r in rows:
@@ -104,6 +105,6 @@ class Table:
         return self.table_name + ':' + str(self.table)
 
 
-persons = Table('persons')
-persons.insert('persons.csv')
-print(persons.table)
+# persons = Table('persons')
+# persons.insert('persons.csv')
+# print(persons.table)
