@@ -121,6 +121,22 @@ def lead():
             advisor_pending_request.update('advisor request')
 
 
+def member():
+    print('Select your action')
+    print('1. See project status')
+    print('2. Modify project information')
+    print('3. Responded requests')
+    print('4. Exit')
+    choice = int(input('Input number(1-4): '))
+    while choice != 4:
+        if choice == 1:
+            print(project.table)
+        elif choice == 2:
+            print(project.table)
+            print('modify or not')
+        elif choice == 3:
+            print(member_pending_request.table)
+
         # make calls to the initializing and login functions defined above
 
 initializing()
