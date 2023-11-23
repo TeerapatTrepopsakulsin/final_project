@@ -55,6 +55,9 @@ class Table:
     def update(self, values=dict):
         self.table.append(values)
 
+    def clear(self):
+        self.table = []
+
     def join(self, other_table, common_key):
         joined_table = Table(self.table_name + '_joins_' + other_table.table_name, [])
         for item1 in self.table:

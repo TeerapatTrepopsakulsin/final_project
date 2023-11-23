@@ -1,4 +1,5 @@
 import database
+import csv
 
 # define a function called initializing
 
@@ -17,17 +18,17 @@ def initializing():
 
     global project
     project = database.Table('project')
-    login_table.insert('project.csv')
+    project.insert('project.csv')
     DB.insert(project)
 
     global advisor_pending_request
     advisor_pending_request = database.Table('advisor_pending_request')
-    login_table.insert('advisor_pending_request.csv')
+    advisor_pending_request.insert('advisor_pending_request.csv')
     DB.insert(advisor_pending_request)
 
     global member_pending_request
     member_pending_request = database.Table('member_pending_request')
-    login_table.insert('member_pending_request.csv')
+    member_pending_request.insert('member_pending_request.csv')
     DB.insert(member_pending_request)
 
 
@@ -60,7 +61,18 @@ def login():
 
 # define a function called exit
 def exit():
-    pass
+    for i in [[persons,'persons.csv'],[login_table, 'login.csv'],[project, 'project.csv'], [advisor_pending_request, 'advisor_pending_request.csv'],[member_pending_request, 'member_pending_request.csv']]:
+        my_file = open(i[1], 'w')
+        writer = csv.writer(my_file)
+        list_of_key = []
+        # print(i[0].table)
+        for keys in i[0].table[0]:
+            list_of_key.append(keys)
+        writer.writerow(list_of_key)
+        for dictionary in i[0].table:
+            writer.writerow(dictionary.values())
+        my_file.close()
+
 
 # here are things to do in this function:
    # write out all the tables that have been modified to the corresponding csv files

@@ -1,1 +1,1 @@
-create class for every role
+create function for every role
