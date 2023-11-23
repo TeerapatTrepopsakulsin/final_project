@@ -5,6 +5,7 @@ import database
 def initializing():
     DB = database.Database()
 
+    global persons
     persons = database.Table('persons')
     persons.insert('persons.csv')
     DB.insert(persons)
@@ -12,16 +13,21 @@ def initializing():
     global login_table
     login_table = database.Table('login')
     login_table.insert('login.csv')
-    print(login_table.table)
     DB.insert(login_table)
 
+    global project
     project = database.Table('project')
+    login_table.insert('project.csv')
     DB.insert(project)
 
+    global advisor_pending_request
     advisor_pending_request = database.Table('advisor_pending_request')
+    login_table.insert('advisor_pending_request.csv')
     DB.insert(advisor_pending_request)
 
+    global member_pending_request
     member_pending_request = database.Table('member_pending_request')
+    login_table.insert('member_pending_request.csv')
     DB.insert(member_pending_request)
 
 
@@ -35,7 +41,6 @@ def initializing():
     # see the guide how many tables are needed
 
     # add all these tables to the database
-initializing()
 
 # define a function called login
 
@@ -62,6 +67,19 @@ def exit():
    # By now, you know how to read in a csv file and transform it into a list of dictionaries. For this project, you also need to know how to do the reverse, i.e., writing out to a csv file given a list of dictionaries. See the link below for a tutorial on how to do this:
    
    # https://www.pythonforbeginners.com/basics/list-of-dictionaries-to-csv-in-python
+
+def student():
+    print('Select your action')
+    print('1. Requests')
+    print('2. Create a project')
+    choice = int(input('Input number(1-2): '))
+    if choice == 1:
+        print(member_pending_request.table)
+        print('Accept or Deny')
+    if choice == 2:
+        print(project.table)
+
+
 
 
 # make calls to the initializing and login functions defined above
