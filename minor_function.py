@@ -22,7 +22,8 @@ def set_row(table, id_value, update_attribute, update_value):
             i[update_attribute] = update_value
 
 val = '1234567'
-project1 = {'ID':'123456','title':'colourblind','lead':'1235567','member1':'1234568','member2':'1234567','advisor':'1234888','status':'nothing'}
+project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
+pending_member = {'ID':'1234567','member':'2235567','response':'1235567','response_date':'1234568'}
 
 project.table.append(project1)
 

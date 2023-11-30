@@ -58,20 +58,20 @@ def int_autocorrect(num, a):
     return a
 
 def isinproject(id ,project):
-    if id == project['member1'] or val == project['member2'] or val == project['lead'] or val == project['advisor']:
+    if id in project.values():
         return True
     return False
 
 
 def set_row(table, id_value, update_attribute, update_value):
     for i in table:
-        if i['projectID'] == id_value:
+        if i['ID'] == id_value:
             i[update_attribute] = update_value
 
 
 def get_row(table, id_value, attribute):
     for i in table:
-        if i['projectID'] == id_value:
+        if i['ID'] == id_value:
             return i[attribute]
 
 
@@ -147,8 +147,22 @@ def student():
     choice = int(input('Input number(1-3): '))
     while choice != 3:
         if choice == 1:
-            print(member_pending_request.table)
-            print('Accept or Deny')
+            for request in member_pending_request.table:
+                if isinproject(ID, request) and not request['response']:
+                    print(request)
+            print('Select your action')
+            print('1. Accept')
+            print('2. Deny')
+            print('3. Cancel')
+            if choice == 1:
+                print('Are you sure?')
+                if confirm():
+                    # become member
+                    # member_request update
+            elif choice == 2:
+                print('Are you sure?')
+                if confirm():
+                    # member_request update
         elif choice == 2:
             # insert title
             print('Do you want to create a project')
@@ -313,6 +327,9 @@ elif role == 'faculty' or role == 'advisor':
     faculty()
 
 # once everything is done, make a call to the exit function
-
+#project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
+#pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
+#project.table.append(project1)
+#member_pending_request.table.append(pending_member1)
 exit()
 
