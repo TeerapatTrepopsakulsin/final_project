@@ -52,6 +52,9 @@ def identify(id):
     return None
 
 
+# def autocorrect(string,a):
+#     if sting is
+
 def isinproject(id ,project):
     if id == project['member1'] or val == project['member2'] or val == project['lead'] or val == project['advisor']:
         return True
@@ -107,7 +110,16 @@ def student():
             print(member_pending_request.table)
             print('Accept or Deny')
         elif choice == 2:
-            print(project.table)
+            # insert title
+            print('Do you want to create a project')
+            print('1. Confirm')
+            print('2. Cancel')
+            choice = int(input('Input number(1-2): '))
+            if choice == 2:
+                # create project dict
+                # change role to lead
+                print('Changing you role to Lead. Automatic Logout')
+                exit()
         choice = int(input('Input number(1-3): '))
 
 
@@ -183,14 +195,14 @@ def faculty():
             print('Select your project type')
             print('1. Under advising project')
             print('2. Other project')
-            print('3. Exit')
+            print('3. Cancel')
             choice = int(input('Input number(1-3): '))
             while choice != 3:
                 if choice == 1:
                     for _project in project.table:
                         if isinproject(ID, _project):
                             print(_project)
-                if choice == 2:
+                elif choice == 2:
                     for _project in project.table:
                         if not isinproject(ID, _project):
                             print(_project)
