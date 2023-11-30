@@ -75,6 +75,15 @@ def get_row(table, id_value, attribute):
             return i[attribute]
 
 
+def confirm():
+    print('1. Confirm')
+    print('2. Cancel')
+    choice = int(input('Input number(1-2): '))
+    if choice == 1:
+        return True
+    return False
+
+
 # define a function called login
 
 def login():
@@ -262,11 +271,18 @@ def admin():
             table = copy.deepcopy(advisor_pending_request.table)
             for request in table:
                 print(request)
-            project_id = input('Input project ID to modify')
-            attribute = input('Input attribute that you want to modify')
-            print(f'{project_id} {attribute} is currently {get_row(table,project_id,attribute)}.')
-            new_value = input('Insert new value')
-            print('modify or not')
+            project_id = input('Input project ID to modify ')
+            attribute = input('Input attribute that you want to modify ')
+            print(f'{project_id} {attribute} is currently {get_row(table, project_id, attribute)}.')
+            new_value = input('Insert new value ')
+            print('Do you want to modify?')
+            if confirm():
+                set_row(table, project_id, attribute, new_value)
+                print('Modifying completed')
+                print()
+            else:
+                print('Modifying cancel')
+                print()
         choice = int(input('Input number(1-7): '))
 
 
