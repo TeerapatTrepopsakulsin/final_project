@@ -65,7 +65,6 @@ def exit():
         my_file = open(i[1], 'w')
         writer = csv.writer(my_file)
         list_of_key = []
-        # print(i[0].table)
         if len(i[0].table) >= 1:
             for keys in i[0].table[0]:
                 list_of_key.append(keys)
@@ -73,6 +72,7 @@ def exit():
             for dictionary in i[0].table:
                 writer.writerow(dictionary.values())
         my_file.close()
+    print('Logged out')
 
 
 # here are things to do in this function:
@@ -103,9 +103,10 @@ def lead():
     print('3. Responded requests')
     print('4. Send out members requests')
     print('5. Send out advisor requests')
-    print('6. Exit')
-    choice = int(input('Input number(1-6): '))
-    while choice != 6:
+    print('6. Request for project evaluation')
+    print('7. Exit')
+    choice = int(input('Input number(1-7): '))
+    while choice != 7:
         if choice == 1:
             print(project.table)
         elif choice == 2:
@@ -121,7 +122,12 @@ def lead():
             print(advisor_pending_request.table)
             print('send request 1 at a time')
             advisor_pending_request.update('advisor request')
-        choice = int(input('Input number(1-6): '))
+        elif choice == 6:
+            print(project.table)
+            print('request confirm?')
+            # change project status
+            # cannot if already waiting for evaluation
+        choice = int(input('Input number(1-7): '))
 
 
 def member():
@@ -159,7 +165,7 @@ def faculty():
             print(project.table)
         elif choice == 3:
             print(project.table)
-            print('Evaluate or not')
+            print('pass or not')
         elif choice == 4:
             print(project.table)
             print('Approve or not')
