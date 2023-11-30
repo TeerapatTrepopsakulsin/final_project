@@ -52,6 +52,12 @@ def identify(id):
     return None
 
 
+def isinproject(id ,project):
+    if id == project['member1'] or val == project['member2'] or val == project['lead'] or val == project['advisor']:
+        return True
+    return False
+
+
 # define a function called login
 
 def login():
@@ -148,7 +154,9 @@ def member():
     choice = int(input('Input number(1-4): '))
     while choice != 4:
         if choice == 1:
-            print(project.table)
+            for _project in project.table:
+                if isinproject(ID, _project):
+                    print(_project)
         elif choice == 2:
             print(project.table)
             print('modify or not')
@@ -220,16 +228,18 @@ while val is None:
     val = login()
 
 # based on the return value for login, activate the code that performs activities according to the role defined for that person_id
+ID = copy.deepcopy(val[0])
+role = copy.deepcopy(val[1])
 
-if val[1] == 'admin':
+if role == 'admin':
     admin()
-elif val[1] == 'student':
+elif role == 'student':
     student()
-elif val[1] == 'member':
+elif role == 'member':
     member()
-elif val[1] == 'lead':
+elif role == 'lead':
     lead()
-elif val[1] == 'faculty' or val[1] == 'advisor':
+elif role == 'faculty' or role == 'advisor':
     faculty()
 
 # once everything is done, make a call to the exit function
