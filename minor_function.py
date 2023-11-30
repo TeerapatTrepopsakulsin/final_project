@@ -1,4 +1,5 @@
 import database
+import  random
 import csv
 
 project = database.Table('project')
@@ -25,11 +26,15 @@ val = '1234567'
 project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
 pending_member = {'ID':'1234567','member':'2235567','response':'1235567','response_date':'1234568'}
 
-project.table.append(project1)
+#project.table.append(project1)
 
 for project in project.table:
     if val == project['member1'] or val == project['member2'] or val == project['lead'] or val == project['advisor']:
         print(project)
 
-print(int_autocorrect('num', 5))
-print(int_autocorrect(1, 5))
+
+def create_project_id():
+    exist_id = ['1111111']
+    print(exist_id)
+    selected_id = random.sample([str(i) for i in range(1000000,9999999) if str(i) not in exist_id])
+    return selected_id

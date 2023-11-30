@@ -1,5 +1,6 @@
 import copy
-
+import random
+import sys
 import database
 import csv
 
@@ -84,6 +85,12 @@ def confirm():
     return False
 
 
+def create_project_id():
+    exist_id = [i['ID'] for i in project.table]
+    selected_id = random.sample([str(i) for i in range(1000000,9999999) if str(i) not in exist_id], 1)
+    return selected_id
+
+
 def admin_modify(table):
     for request in table:
         print(request)
@@ -157,20 +164,24 @@ def student():
             if choice == 1:
                 print('Are you sure?')
                 if confirm():
+                    pass
                     # become member
                     # member_request update
             elif choice == 2:
                 print('Are you sure?')
                 if confirm():
+                    pass
                     # member_request update
         elif choice == 2:
-            # insert title
+            title = str(input('Please insert the project title: '))
             print('Do you want to create a project')
             if confirm():
-                # create project dict
+                new_project_id = create_project_id()
+                new_project = {'ID':new_project_id,'title':title,'lead':ID,'member1':None,'member2':None,'advisor':None,'status':'Not started'}
+                project.table.append(new_project)
                 # change role to lead
                 print('Changing you role to Lead. Automatic Logout')
-                exit()
+                sys.exit()
             else:
                 print('Creating canceled')
                 print()
