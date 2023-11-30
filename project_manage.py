@@ -92,6 +92,7 @@ def student():
             print('Accept or Deny')
         elif choice == 2:
             print(project.table)
+        choice = int(input('Input number(1-5): '))
 
 
 def lead():
@@ -119,6 +120,7 @@ def lead():
             print(advisor_pending_request.table)
             print('send request 1 at a time')
             advisor_pending_request.update('advisor request')
+        choice = int(input('Input number(1-5): '))
 
 
 def member():
@@ -136,7 +138,31 @@ def member():
             print('modify or not')
         elif choice == 3:
             print(member_pending_request.table)
+        choice = int(input('Input number(1-5): '))
 
+
+def faculty():
+    print('Select your action')
+    print('1. Requests')
+    print('2. See project status')
+    print('3. Evaluate project')
+    print('4. Approve project')
+    print('5. Exit')
+    choice = int(input('Input number(1-5): '))
+    while choice != 5:
+        if choice == 1:
+            print(advisor_pending_request.table)
+            print('Accept or Deny')
+        if choice == 2:
+            print('Under advisor or not')
+            print(project.table)
+        if choice == 3:
+            print(project.table)
+            print('Evaluate or not')
+        if choice == 4:
+            print(project.table)
+            print('Approve or not')
+        choice = int(input('Input number(1-5): '))
         # make calls to the initializing and login functions defined above
 
 initializing()
