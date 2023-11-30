@@ -236,12 +236,14 @@ def admin():
             print(project.table)
             print('modify or not')
         elif choice == 3:
-            print(member_pending_request.table)
+            for request in member_pending_request.table:
+                print(request)
         elif choice == 4:
             print(member_pending_request.table)
             print('modify or not')
         elif choice == 5:
-            print(advisor_pending_request.table)
+            for request in advisor_pending_request.table:
+                print(request)
         elif choice == 6:
             print(advisor_pending_request.table)
             print('modify or not')
