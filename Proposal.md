@@ -1,5 +1,11 @@
 # Evaluating a project
 
+
+- Lead
+    * Send request for project evaluation to advisor
+    * Cannot send anymore request if already sent
+
+
 - Advisor (An advising faculty)
     * See the request to evaluate project 
     * Choose to approve or disapprove the project under advising
