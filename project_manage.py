@@ -199,6 +199,10 @@ def admin():
 
 initializing()
 val = login()
+while val is None:
+    print('Invalid username or password.')
+    print()
+    val = login()
 
 # based on the return value for login, activate the code that performs activities according to the role defined for that person_id
 
