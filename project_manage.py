@@ -135,14 +135,14 @@ def student():
         elif choice == 2:
             # insert title
             print('Do you want to create a project')
-            print('1. Confirm')
-            print('2. Cancel')
-            choice = int(input('Input number(1-2): '))
-            if choice == 2:
+            if confirm():
                 # create project dict
                 # change role to lead
                 print('Changing you role to Lead. Automatic Logout')
                 exit()
+            else:
+                print('Creating canceled')
+                print()
         choice = int(input('Input number(1-3): '))
 
 
@@ -281,7 +281,7 @@ def admin():
                 print('Modifying completed')
                 print()
             else:
-                print('Modifying cancel')
+                print('Modifying canceled')
                 print()
         choice = int(input('Input number(1-7): '))
 
