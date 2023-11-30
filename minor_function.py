@@ -16,7 +16,7 @@ def int_autocorrect(num, a):
     return a
 
 
-def update_row(table, id_value, update_attribute, update_value):
+def set_row(table, id_value, update_attribute, update_value):
     for i in table:
         if i['projectID'] == id_value:
             i[update_attribute] = update_value

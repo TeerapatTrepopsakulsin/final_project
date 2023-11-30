@@ -63,10 +63,16 @@ def isinproject(id ,project):
     return False
 
 
-def update_row(table, id_value, update_attribute, update_value):
+def set_row(table, id_value, update_attribute, update_value):
     for i in table:
         if i['projectID'] == id_value:
             i[update_attribute] = update_value
+
+
+def get_row(table, id_value, attribute):
+    for i in table:
+        if i['projectID'] == id_value:
+            return i[attribute]
 
 
 # define a function called login
@@ -253,8 +259,13 @@ def admin():
             for request in advisor_pending_request.table:
                 print(request)
         elif choice == 6:
-            for request in advisor_pending_request.table:
+            table = copy.deepcopy(advisor_pending_request.table)
+            for request in table:
                 print(request)
+            project_id = input('Input project ID to modify')
+            attribute = input('Input attribute that you want to modify')
+            print(f'{project_id} {attribute} is currently {get_row(table,project_id,attribute)}.')
+            new_value = input('Insert new value')
             print('modify or not')
         choice = int(input('Input number(1-7): '))
 
