@@ -84,6 +84,23 @@ def confirm():
     return False
 
 
+def admin_modify(table):
+    for request in table:
+        print(request)
+    project_id = input('Input project ID to modify ')
+    attribute = input('Input attribute that you want to modify ')
+    print(f'{project_id} {attribute} is currently {get_row(table, project_id, attribute)}.')
+    new_value = input('Insert new value ')
+    print('Do you want to modify?')
+    if confirm():
+        set_row(table, project_id, attribute, new_value)
+        print('Modifying completed')
+        print()
+    else:
+        print('Modifying canceled')
+        print()
+
+
 # define a function called login
 
 def login():
