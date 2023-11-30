@@ -271,35 +271,20 @@ def admin():
             for _project in project.table:
                 print(_project)
         elif choice == 2:
-            for _project in project.table:
-                print(_project)
-            print('modify or not')
+            table = copy.deepcopy(project.table)
+            admin_modify(table)
         elif choice == 3:
             for request in member_pending_request.table:
                 print(request)
         elif choice == 4:
-            for request in member_pending_request.table:
-                print(request)
-            print('modify or not')
+            table = copy.deepcopy(member_pending_request.table)
+            admin_modify(table)
         elif choice == 5:
             for request in advisor_pending_request.table:
                 print(request)
         elif choice == 6:
             table = copy.deepcopy(advisor_pending_request.table)
-            for request in table:
-                print(request)
-            project_id = input('Input project ID to modify ')
-            attribute = input('Input attribute that you want to modify ')
-            print(f'{project_id} {attribute} is currently {get_row(table, project_id, attribute)}.')
-            new_value = input('Insert new value ')
-            print('Do you want to modify?')
-            if confirm():
-                set_row(table, project_id, attribute, new_value)
-                print('Modifying completed')
-                print()
-            else:
-                print('Modifying canceled')
-                print()
+            admin_modify(table)
         choice = int(input('Input number(1-7): '))
 
 
