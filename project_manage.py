@@ -233,19 +233,22 @@ def admin():
             for _project in project.table:
                 print(_project)
         elif choice == 2:
-            print(project.table)
+            for _project in project.table:
+                print(_project)
             print('modify or not')
         elif choice == 3:
             for request in member_pending_request.table:
                 print(request)
         elif choice == 4:
-            print(member_pending_request.table)
+            for request in member_pending_request.table:
+                print(request)
             print('modify or not')
         elif choice == 5:
             for request in advisor_pending_request.table:
                 print(request)
         elif choice == 6:
-            print(advisor_pending_request.table)
+            for request in advisor_pending_request.table:
+                print(request)
             print('modify or not')
         choice = int(input('Input number(1-7): '))
 
