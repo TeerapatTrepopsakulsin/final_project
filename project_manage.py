@@ -1,3 +1,5 @@
+import copy
+
 import database
 import csv
 
@@ -42,6 +44,13 @@ def initializing():
     # see the guide how many tables are needed
 
     # add all these tables to the database
+def identify(id):
+    persons_list = copy.deepcopy(persons.table)
+    for person in persons_list:
+        if person['ID'] == id:
+            return person['fist']
+    return None
+
 
 # define a function called login
 
