@@ -15,6 +15,12 @@ def int_autocorrect(num, a):
         return num
     return a
 
+
+def update_row(table, id_value, update_attribute, update_value):
+    for i in table:
+        if i['projectID'] == id_value:
+            i[update_attribute] = update_value
+
 val = '1234567'
 project1 = {'ID':'123456','title':'colourblind','lead':'1235567','member1':'1234568','member2':'1234567','advisor':'1234888','status':'nothing'}
 
