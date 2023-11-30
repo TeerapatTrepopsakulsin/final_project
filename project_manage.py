@@ -123,7 +123,9 @@ def lead():
     choice = int(input('Input number(1-7): '))
     while choice != 7:
         if choice == 1:
-            print(project.table)
+            for _project in project.table:
+                if isinproject(ID, _project):
+                    print(_project)
         elif choice == 2:
             print(project.table)
             print('modify or not')
@@ -178,8 +180,21 @@ def faculty():
             print(advisor_pending_request.table)
             print('Accept or Deny')
         elif choice == 2:
-            print('Under advisor or not')
-            print(project.table)
+            print('Select your project type')
+            print('1. Under advising project')
+            print('2. Other project')
+            print('3. Exit')
+            choice = int(input('Input number(1-3): '))
+            while choice != 3:
+                if choice == 1:
+                    for _project in project.table:
+                        if isinproject(ID, _project):
+                            print(_project)
+                if choice == 2:
+                    for _project in project.table:
+                        if not isinproject(ID, _project):
+                            print(_project)
+                choice = int(input('Input number(1-3): '))
         elif choice == 3:
             print(project.table)
             print('pass or not')
@@ -201,7 +216,8 @@ def admin():
     choice = int(input('Input number(1-7): '))
     while choice != 7:
         if choice == 1:
-            print(project.table)
+            for _project in project.table:
+                print(_project)
         elif choice == 2:
             print(project.table)
             print('modify or not')
