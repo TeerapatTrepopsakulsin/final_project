@@ -206,18 +206,16 @@ while val is None:
 
 # based on the return value for login, activate the code that performs activities according to the role defined for that person_id
 
-# if val[1] = 'admin':
-    # admin()
-# elif val[1] = 'student':
-    # student()
-# elif val[1] = 'member':
-    # see and do member related activities
-# elif val[1] = 'lead':
-    # see and do lead related activities
-# elif val[1] = 'faculty':
-    # see and do faculty related activities
-# elif val[1] = 'advisor':
-    # see and do advisor related activities
+if val[1] == 'admin':
+    admin()
+elif val[1] == 'student':
+    student()
+elif val[1] == 'member':
+    member()
+elif val[1] == 'lead':
+    lead()
+elif val[1] == 'faculty' or val[1] == 'advisor':
+    faculty()
 
 # once everything is done, make a call to the exit function
 
