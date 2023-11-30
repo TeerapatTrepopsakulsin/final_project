@@ -66,11 +66,12 @@ def exit():
         writer = csv.writer(my_file)
         list_of_key = []
         # print(i[0].table)
-        for keys in i[0].table[0]:
-            list_of_key.append(keys)
-        writer.writerow(list_of_key)
-        for dictionary in i[0].table:
-            writer.writerow(dictionary.values())
+        if len(i[0].table) >= 1:
+            for keys in i[0].table[0]:
+                list_of_key.append(keys)
+            writer.writerow(list_of_key)
+            for dictionary in i[0].table:
+                writer.writerow(dictionary.values())
         my_file.close()
 
 
@@ -202,9 +203,9 @@ val = login()
 # based on the return value for login, activate the code that performs activities according to the role defined for that person_id
 
 # if val[1] = 'admin':
-    # see and do admin related activities
+    # admin()
 # elif val[1] = 'student':
-    # see and do student related activities
+    # student()
 # elif val[1] = 'member':
     # see and do member related activities
 # elif val[1] = 'lead':
@@ -215,4 +216,6 @@ val = login()
     # see and do advisor related activities
 
 # once everything is done, make a call to the exit function
+
 exit()
+
