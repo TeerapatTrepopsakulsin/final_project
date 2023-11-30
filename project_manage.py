@@ -52,8 +52,10 @@ def identify(id):
     return None
 
 
-# def autocorrect(string,a):
-#     if sting is
+def int_autocorrect(num, a):
+    if isinstance(num, int):
+        return num
+    return a
 
 def isinproject(id ,project):
     if id == project['member1'] or val == project['member2'] or val == project['lead'] or val == project['advisor']:
