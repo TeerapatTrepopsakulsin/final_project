@@ -258,12 +258,12 @@ def faculty():
 
 def admin():
     print('Select your action')
-    print('1. See project status')
-    print('2. Modify project information')
-    print('3. See pending members requests status')
-    print('4. Modify pending members requests information')
-    print('5. See pending advisor requests status')
-    print('6. Modify pending advisor requests information')
+    print('1. See project data')
+    print('2. Modify project data')
+    print('3. See pending members data')
+    print('4. Modify pending members requests data')
+    print('5. See pending advisor requests data')
+    print('6. Modify pending advisor requests data')
     print('7. Exit')
     choice = int(input('Input number(1-7): '))
     while choice != 7:
