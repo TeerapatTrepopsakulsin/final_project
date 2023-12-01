@@ -177,11 +177,17 @@ def student():
             print('Do you want to create a project')
             if confirm():
                 new_project_id = create_project_id()
-                new_project = {'ID':new_project_id,'title':title,'lead':ID,'member1':None,'member2':None,'advisor':None,'status':'Not started'}
+                new_project = {'ID': new_project_id[0],
+                               'title': title,
+                               'lead': ID,
+                               'member1': None,
+                               'member2': None,
+                               'advisor': None,
+                               'status': 'Not started'}
                 project.table.append(new_project)
-                # change role to lead
-                print('Changing you role to Lead. Automatic Logout')
-                sys.exit()
+                set_row(login_table.table, ID, 'role', 'lead')
+                exit()
+                sys.exit('Changing you role to Lead. Automatic Logout')
             else:
                 print('Creating canceled')
                 print()

@@ -19,7 +19,7 @@ def int_autocorrect(num, a):
 
 def set_row(table, id_value, update_attribute, update_value):
     for i in table:
-        if i['projectID'] == id_value:
+        if i['ID'] == id_value:
             i[update_attribute] = update_value
 
 val = '1234567'
