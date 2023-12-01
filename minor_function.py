@@ -1,6 +1,6 @@
 import database
 import  random
-import csv
+from time import time,strftime,localtime
 
 project = database.Table('project')
 project.insert('project.csv')
@@ -24,7 +24,8 @@ def set_row(table, id_value, update_attribute, update_value):
 
 val = '1234567'
 project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
-pending_member = {'ID':'1234567','member':'2235567','response':'1235567','response_date':'1234568'}
+pending_member = {'ID':'1234567','member':'2235567','response':None,'response_date':None}
+pending_advisor = {'ID':'1234567','advisor':'2235567','response':'1235567','response_date':'1234568'}
 
 #project.table.append(project1)
 
@@ -38,3 +39,6 @@ def create_project_id():
     print(exist_id)
     selected_id = random.sample([str(i) for i in range(1000000,9999999) if str(i) not in exist_id])
     return selected_id
+
+test = '1234567,0000000,,'
+print(strftime("%d/%b/%Y", localtime(time())))

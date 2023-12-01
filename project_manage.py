@@ -3,6 +3,7 @@ import random
 import sys
 import database
 import csv
+from time import time, strftime, localtime
 
 # define a function called initializing
 
@@ -87,7 +88,7 @@ def confirm():
 
 def create_project_id():
     exist_id = [i['ID'] for i in project.table]
-    selected_id = random.sample([str(i) for i in range(1000000,9999999) if str(i) not in exist_id], 1)
+    selected_id = random.sample([str(i) for i in range(1000000, 9999999) if str(i) not in exist_id], 1)
     return selected_id
 
 
@@ -155,8 +156,11 @@ def student():
     while choice != 3:
         if choice == 1:
             for request in member_pending_request.table:
-                if isinproject(ID, request) and not request['response']:
+                k = 0
+                if isinproject(ID, request) and request['response'] is None and k == 0:
                     print(request)
+                    project_id = copy.deepcopy(request['ID'])
+                    k += 1
             print('Select your action')
             print('1. Accept')
             print('2. Deny')
@@ -167,11 +171,20 @@ def student():
                     pass
                     # become member
                     # member_request update
+                else:
+                    print('Accepting canceled')
+                    print()
             elif choice == 2:
                 print('Are you sure?')
                 if confirm():
-                    pass
+                    set_row(member_pending_request.table, project_id, 'response', 'Denied')
+                    set_row(member_pending_request.table, project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
                     # member_request update
+                    print('Denying confirmed')
+                    print()
+                else:
+                    print('Denying canceled')
+                    print()
         elif choice == 2:
             title = str(input('Please insert the project title: '))
             print('Do you want to create a project')
