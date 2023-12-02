@@ -46,11 +46,13 @@ def initializing():
     # see the guide how many tables are needed
 
     # add all these tables to the database
+
+
 def identify(id):
     persons_list = copy.deepcopy(persons.table)
     for person in persons_list:
         if person['ID'] == id:
-            return person['fist']
+            return f"{person['fist']} {person['last']}"
     return None
 
 
@@ -109,6 +111,26 @@ def admin_modify(table):
         print()
 
 
+class Project:
+    def __init__(self, ID):
+        self.ID = ID
+        self.title = get_row(project.table, ID, 'title')
+        self.lead = get_row(project.table, ID, 'lead')
+        self.member1 = get_row(project.table, ID, 'member1')
+        self.member2 = get_row(project.table, ID, 'member2')
+        self.advisor = get_row(project.table, ID, 'advisor')
+        self.status = get_row(project.table, ID, 'status')
+
+    def show(self):
+        return (f'Project title: {self.title}\n'
+                f'Lead: {identify(self.lead)}\n'
+                f'Member: {identify(self.member1)}\n'
+                f'Member: {identify(self.member2)}\n'
+                f'Advisor: {identify(self.advisor)}\n'
+                f'Project status: {self.status}')
+
+
+
 # define a function called login
 
 def login():
@@ -155,11 +177,14 @@ def student():
     choice = int(input('Input number(1-3): '))
     while choice != 3:
         if choice == 1:
+            k = 0
             for request in member_pending_request.table:
-                k = 0
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
-                    print(request)
                     project_id = copy.deepcopy(request['ID'])
+                    lead_id = get_row(project.table, project_id, 'lead')
+                    project_title = get_row(project.table, project_id, 'title')
+                    print(f'{identify(lead_id)} want you to join {project_title} project.')
+                    print()
                     k += 1
             print('Select your action')
             print('1. Accept')
@@ -373,5 +398,6 @@ elif role == 'faculty' or role == 'advisor':
 #pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
 #project.table.append(project1)
 #member_pending_request.table.append(pending_member1)
+print(Project('1234567').show())
 exit()
 
