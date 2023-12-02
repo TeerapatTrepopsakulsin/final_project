@@ -81,6 +81,7 @@ def get_row(table, id_value, attribute):
 
 
 def confirm():
+    print()
     print('Press only Enter to Confirm')
     choice = input('Press other key to Cancel ')
     if choice == "":
@@ -122,13 +123,22 @@ class Project:
         self.status = get_row(project.table, ID, 'status')
 
     def show(self):
-        return (f'Project title: {self.title}\n'
+        print(f'Project title: {self.title}\n'
                 f'Lead: {identify(self.lead)}\n'
                 f'Member: {identify(self.member1)}\n'
                 f'Member: {identify(self.member2)}\n'
                 f'Advisor: {identify(self.advisor)}\n'
                 f'Project status: {self.status}')
 
+    def show_request(self):
+        print('--Request history--')
+        for table in [member_pending_request.table, advisor_pending_request.table]:
+            for i in table:
+                if i['ID'] == self.ID:
+                    if i['response'] == '':
+                        print(f"{identify(i['member'])} hasn't responded to the request")
+                    else:
+                        print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
 
 
 # define a function called login
@@ -175,6 +185,7 @@ def student():
     print('2. Create a project')
     print('3. Exit')
     choice = int(input('Input number(1-3): '))
+    print()
     while choice != 3:
         if choice == 1:
             print()
@@ -184,44 +195,45 @@ def student():
                     project_id = copy.deepcopy(request['ID'])
                     your_project = Project(project_id)
                     print(f'{identify(your_project.lead)} want you to join {your_project.title} project.')
-                    print(your_project.show())
+                    your_project.show()
                     k += 1
-            print('Select your action')
-            print('1. Accept')
-            print('2. Deny')
-            print('3. Cancel')
-            choice = int(input('Input number(1-3): '))
-            if choice == 1:
-                print('Are you sure?')
-                if confirm():
-                    if get_row(project.table, project_id, 'member1') == '':
-                        set_row(project.table, project_id, 'member1', ID)
-                    elif get_row(project.table, project_id, 'member2') == '':
-                        set_row(project.table, project_id, 'member2', ID)
-                    # become member
-                    set_row(member_pending_request.table, project_id, 'response', 'Accepted')
-                    set_row(member_pending_request.table, project_id, 'response_date',
-                            strftime("%d/%b/%Y", localtime(time())))
-                    # member_request update
-                    set_row(login_table.table, ID, 'role', 'member')
-                    exit()
-                    sys.exit('Changing you role to Member. Automatic Logout')
-                    # login update
-                else:
-                    print('Accepting canceled')
-                    print()
-            elif choice == 2:
-                print('Are you sure?')
-                if confirm():
-                    set_row(member_pending_request.table, project_id, 'response', 'Denied')
-                    set_row(member_pending_request.table, project_id, 'response_date',
-                            strftime("%d/%b/%Y", localtime(time())))
-                    # member_request update
-                    print('Denying confirmed')
-                    print()
-                else:
-                    print('Denying canceled')
-                    print()
+            if k == 0:
+                print('You have no request')
+            else:
+                print()
+                print('Select your action')
+                print('1. Accept')
+                print('2. Deny')
+                print('3. Cancel')
+                choice = int(input('Input number(1-3): '))
+                if choice == 1:
+                    print('Are you sure?')
+                    if confirm():
+                        if your_project.member1 == '':
+                            set_row(project.table, project_id, 'member1', ID)
+                        elif your_project.member2 == '':
+                            set_row(project.table, project_id, 'member2', ID)
+                        # become member
+                        set_row(member_pending_request.table, project_id, 'response', 'Accepted')
+                        set_row(member_pending_request.table, project_id, 'response_date',
+                                strftime("%d/%b/%Y", localtime(time())))
+                        # member_request update
+                        set_row(login_table.table, ID, 'role', 'member')
+                        exit()
+                        sys.exit('Changing you role to Member. Automatic Logout')
+                        # login update
+                    else:
+                        print('Accepting canceled')
+                elif choice == 2:
+                    print('Are you sure?')
+                    if confirm():
+                        set_row(member_pending_request.table, project_id, 'response', 'Denied')
+                        set_row(member_pending_request.table, project_id, 'response_date',
+                                strftime("%d/%b/%Y", localtime(time())))
+                        # member_request update
+                        print('Denying confirmed')
+                    else:
+                        print('Denying canceled')
         elif choice == 2:
             title = str(input('Please insert the project title: '))
             print('Do you want to create a project')
@@ -240,34 +252,42 @@ def student():
                 sys.exit('Changing you role to Lead. Automatic Logout')
             else:
                 print('Creating canceled')
-                print()
+        print()
         print('Select your action')
         print('1. Requests')
         print('2. Create a project')
         print('3. Exit')
         choice = int(input('Input number(1-3): '))
+        print()
 
 
 def lead():
     print('Select your action')
     print('1. See project status')
     print('2. Modify project information')
-    print('3. Responded requests')
+    print('3. Requests history')
     print('4. Send out members requests')
     print('5. Send out advisor requests')
     print('6. Request for project evaluation')
     print('7. Exit')
     choice = int(input('Input number(1-7): '))
+    print()
     while choice != 7:
         if choice == 1:
             for _project in project.table:
                 if isinproject(ID, _project):
-                    print(_project)
+                    project_id = copy.deepcopy(_project['ID'])
+                    your_project = Project(project_id)
+                    your_project.show()
         elif choice == 2:
             print(project.table)
             print('modify or not')
         elif choice == 3:
-            print(member_pending_request.table)
+            for _project in project.table:
+                if isinproject(ID, _project):
+                    project_id = copy.deepcopy(_project['ID'])
+                    your_project = Project(project_id)
+                    your_project.show_request()
         elif choice == 4:
             print(member_pending_request.table)
             print('send request 1 at a time')
@@ -281,40 +301,51 @@ def lead():
             print('request confirm?')
             # change project status
             # cannot if already waiting for evaluation
+        print()
         print('Select your action')
         print('1. See project status')
         print('2. Modify project information')
-        print('3. Responded requests')
+        print('3. Requests history')
         print('4. Send out members requests')
         print('5. Send out advisor requests')
         print('6. Request for project evaluation')
         print('7. Exit')
         choice = int(input('Input number(1-7): '))
+        print()
 
 
 def member():
     print('Select your action')
     print('1. See project status')
     print('2. Modify project information')
-    print('3. Responded requests')
+    print('3. Requests history')
     print('4. Exit')
     choice = int(input('Input number(1-4): '))
+    print()
     while choice != 4:
         if choice == 1:
             for _project in project.table:
                 if isinproject(ID, _project):
-                    print(_project)
+                    project_id = copy.deepcopy(_project['ID'])
+                    your_project = Project(project_id)
+                    your_project.show()
         elif choice == 2:
             print(project.table)
             print('modify or not')
         elif choice == 3:
-            print(member_pending_request.table)
+            for _project in project.table:
+                if isinproject(ID, _project):
+                    project_id = copy.deepcopy(_project['ID'])
+                    your_project = Project(project_id)
+                    your_project.show_request()
+        print()
         print('Select your action')
         print('1. See project status')
         print('2. Modify project information')
-        print('3. Responded requests')
+        print('3. Requests history')
         print('4. Exit')
         choice = int(input('Input number(1-4): '))
+        print()
 
 
 def faculty():
@@ -325,6 +356,7 @@ def faculty():
     print('4. Approve project')
     print('5. Exit')
     choice = int(input('Input number(1-5): '))
+    print()
     while choice != 5:
         if choice == 1:
             print(advisor_pending_request.table)
@@ -335,22 +367,27 @@ def faculty():
             print('2. Other project')
             print('3. Cancel')
             choice = int(input('Input number(1-3): '))
+            print()
             while choice != 3:
                 if choice == 1:
                     for _project in project.table:
                         if isinproject(ID, _project):
-                            print(_project)
+                            project_id = copy.deepcopy(_project['ID'])
+                            your_project = Project(project_id)
+                            your_project.show()
                 elif choice == 2:
                     for _project in project.table:
                         if not isinproject(ID, _project):
                             print(_project)
                 choice = int(input('Input number(1-3): '))
+                print()
         elif choice == 3:
             print(project.table)
             print('pass or not')
         elif choice == 4:
             print(project.table)
             print('Approve or not')
+        print()
         print('Select your action')
         print('1. Requests')
         print('2. See project status')
@@ -358,6 +395,7 @@ def faculty():
         print('4. Approve project')
         print('5. Exit')
         choice = int(input('Input number(1-5): '))
+        print()
 
 
 def admin():
@@ -370,6 +408,7 @@ def admin():
     print('6. Modify pending advisor requests data')
     print('7. Exit')
     choice = int(input('Input number(1-7): '))
+    print()
     while choice != 7:
         if choice == 1:
             for _project in project.table:
@@ -389,6 +428,7 @@ def admin():
         elif choice == 6:
             table = copy.deepcopy(advisor_pending_request.table)
             admin_modify(table)
+        print()
         print('Select your action')
         print('1. See project data')
         print('2. Modify project data')
@@ -398,6 +438,7 @@ def admin():
         print('6. Modify pending advisor requests data')
         print('7. Exit')
         choice = int(input('Input number(1-7): '))
+        print()
 
 
         # make calls to the initializing and login functions defined above
@@ -429,6 +470,6 @@ elif role == 'faculty' or role == 'advisor':
 #pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
 #project.table.append(project1)
 #member_pending_request.table.append(pending_member1)
-print(Project('1234567').show())
+# print(Project('1234567').show())
 exit()
 
