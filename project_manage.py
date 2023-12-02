@@ -177,14 +177,14 @@ def student():
     choice = int(input('Input number(1-3): '))
     while choice != 3:
         if choice == 1:
+            print()
             k = 0
             for request in member_pending_request.table:
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
                     project_id = copy.deepcopy(request['ID'])
-                    lead_id = get_row(project.table, project_id, 'lead')
-                    project_title = get_row(project.table, project_id, 'title')
-                    print(f'{identify(lead_id)} want you to join {project_title} project.')
-                    print()
+                    your_project = Project(project_id)
+                    print(f'{identify(your_project.lead)} want you to join {your_project.title} project.')
+                    print(your_project.show())
                     k += 1
             print('Select your action')
             print('1. Accept')
@@ -241,6 +241,10 @@ def student():
             else:
                 print('Creating canceled')
                 print()
+        print('Select your action')
+        print('1. Requests')
+        print('2. Create a project')
+        print('3. Exit')
         choice = int(input('Input number(1-3): '))
 
 
@@ -277,6 +281,14 @@ def lead():
             print('request confirm?')
             # change project status
             # cannot if already waiting for evaluation
+        print('Select your action')
+        print('1. See project status')
+        print('2. Modify project information')
+        print('3. Responded requests')
+        print('4. Send out members requests')
+        print('5. Send out advisor requests')
+        print('6. Request for project evaluation')
+        print('7. Exit')
         choice = int(input('Input number(1-7): '))
 
 
@@ -297,6 +309,11 @@ def member():
             print('modify or not')
         elif choice == 3:
             print(member_pending_request.table)
+        print('Select your action')
+        print('1. See project status')
+        print('2. Modify project information')
+        print('3. Responded requests')
+        print('4. Exit')
         choice = int(input('Input number(1-4): '))
 
 
@@ -334,6 +351,12 @@ def faculty():
         elif choice == 4:
             print(project.table)
             print('Approve or not')
+        print('Select your action')
+        print('1. Requests')
+        print('2. See project status')
+        print('3. Evaluate project')
+        print('4. Approve project')
+        print('5. Exit')
         choice = int(input('Input number(1-5): '))
 
 
@@ -366,6 +389,14 @@ def admin():
         elif choice == 6:
             table = copy.deepcopy(advisor_pending_request.table)
             admin_modify(table)
+        print('Select your action')
+        print('1. See project data')
+        print('2. Modify project data')
+        print('3. See pending members data')
+        print('4. Modify pending members requests data')
+        print('5. See pending advisor requests data')
+        print('6. Modify pending advisor requests data')
+        print('7. Exit')
         choice = int(input('Input number(1-7): '))
 
 
