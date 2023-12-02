@@ -68,6 +68,14 @@ def isinproject(id, project):
     return False
 
 
+def count_requests(table, id):
+    count = 0
+    for request in table:
+        if isinproject(id, request) and request['response'] == '':
+            count += 1
+    return count
+
+
 def set_row(table, id_value, update_attribute, update_value):
     for i in table:
         if i['ID'] == id_value:
@@ -466,10 +474,11 @@ elif role == 'faculty' or role == 'advisor':
     faculty()
 
 # once everything is done, make a call to the exit function
-#project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
-#pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
-#project.table.append(project1)
-#member_pending_request.table.append(pending_member1)
+# project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
+# pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
+# project.table.append(project1)
+# member_pending_request.table.append(pending_member1)
 # print(Project('1234567').show())
+# print(count_requests(member_pending_request.table, '0000000'))
 exit()
 
