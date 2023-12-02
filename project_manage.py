@@ -80,7 +80,7 @@ def get_row(table, id_value, attribute):
 
 def confirm():
     print('Press only Enter to Confirm')
-    choice = int(input('Press other key to Cancel '))
+    choice = input('Press other key to Cancel ')
     if choice == "":
         return True
     return False
@@ -157,7 +157,7 @@ def student():
         if choice == 1:
             for request in member_pending_request.table:
                 k = 0
-                if isinproject(ID, request) and request['response'] is None and k == 0:
+                if isinproject(ID, request) and request['response'] == '' and k == 0:
                     print(request)
                     project_id = copy.deepcopy(request['ID'])
                     k += 1
@@ -165,6 +165,7 @@ def student():
             print('1. Accept')
             print('2. Deny')
             print('3. Cancel')
+            choice = int(input('Input number(1-3): '))
             if choice == 1:
                 print('Are you sure?')
                 if confirm():
