@@ -169,9 +169,19 @@ def student():
             if choice == 1:
                 print('Are you sure?')
                 if confirm():
-                    pass
+                    if get_row(project.table, project_id, 'member1') == '':
+                        set_row(project.table, project_id, 'member1', ID)
+                    elif get_row(project.table, project_id, 'member2') == '':
+                        set_row(project.table, project_id, 'member2', ID)
                     # become member
+                    set_row(member_pending_request.table, project_id, 'response', 'Accepted')
+                    set_row(member_pending_request.table, project_id, 'response_date',
+                            strftime("%d/%b/%Y", localtime(time())))
                     # member_request update
+                    set_row(login_table.table, ID, 'role', 'member')
+                    exit()
+                    sys.exit('Changing you role to Member. Automatic Logout')
+                    # login update
                 else:
                     print('Accepting canceled')
                     print()
@@ -179,7 +189,8 @@ def student():
                 print('Are you sure?')
                 if confirm():
                     set_row(member_pending_request.table, project_id, 'response', 'Denied')
-                    set_row(member_pending_request.table, project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
+                    set_row(member_pending_request.table, project_id, 'response_date',
+                            strftime("%d/%b/%Y", localtime(time())))
                     # member_request update
                     print('Denying confirmed')
                     print()
