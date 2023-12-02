@@ -52,8 +52,10 @@ class Table:
             for r in rows:
                 self.table.append(dict(r))
 
-    def update(self, values=dict):
-        self.table.append(values)
+    def update(self, id_value=str, values=dict):
+        for i in self.table:
+            if i['ID'] == id_value:
+                i.update(values)
 
     def clear(self):
         self.table = []

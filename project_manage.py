@@ -129,6 +129,7 @@ class Project:
         self.member2 = get_row(project.table, ID, 'member2')
         self.advisor = get_row(project.table, ID, 'advisor')
         self.status = get_row(project.table, ID, 'status')
+        #self.__dict__ = {'ID':self.ID,'title':self.title,'lead':self.lead,'member1':self.member1,'member2':self.member2,'advisor':self.advisor,'status':self.status}
 
     def show(self):
         print(f'Project title: {self.title}\n'
@@ -147,7 +148,6 @@ class Project:
                         print(f"{identify(i['member'])} hasn't responded to the request")
                     else:
                         print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
-
 
 # define a function called login
 
@@ -480,5 +480,10 @@ elif role == 'faculty' or role == 'advisor':
 # member_pending_request.table.append(pending_member1)
 # print(Project('1234567').show())
 # print(count_requests(member_pending_request.table, '0000000'))
+print(Project('1234567').__dict__)
+for i in project.table:
+    if i['ID'] == '2023341':
+        i.update({'ID': '2023341', 'title': 'colourblind', 'lead': '1235567', 'member1': '1234568', 'member2': '0000000', 'advisor': '1234888', 'status': 'nothing'})
+
 exit()
 
