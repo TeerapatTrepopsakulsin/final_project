@@ -59,7 +59,8 @@ def int_autocorrect(num, a):
         return num
     return a
 
-def isinproject(id ,project):
+
+def isinproject(id, project):
     if id in project.values():
         return True
     return False
@@ -78,10 +79,9 @@ def get_row(table, id_value, attribute):
 
 
 def confirm():
-    print('1. Confirm')
-    print('2. Cancel')
-    choice = int(input('Input number(1-2): '))
-    if choice == 1:
+    print('Press only Enter to Confirm')
+    choice = int(input('Press other key to Cancel '))
+    if choice == "":
         return True
     return False
 
