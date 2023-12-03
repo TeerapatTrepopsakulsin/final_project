@@ -66,15 +66,15 @@
 
 ### Note
 - Project status:
-  * not_started 
+  * Not started 
     - no advisor
-  * initiate            
+  * Initiate            
     - advisor supervised
-  * in_progress 
+  * In progress 
     - advisor approved proposal
-  * advisor_approved 
+  * Advisor approved 
     - advisor approved report
-  * approved 
+  * Approved 
     - faculty approved report
-  * completed 
+  * Completed 
     - advisor approved project
