@@ -395,7 +395,9 @@ def faculty():
                 elif choice == 2:
                     for _project in project.table:
                         if not isinproject(ID, _project):
-                            print(_project)
+                            project_id = copy.deepcopy(_project['ID'])
+                            your_project = Project(project_id)
+                            your_project.show()
                 choice = int(input('Input number(1-3): '))
                 print()
         elif choice == 3:
