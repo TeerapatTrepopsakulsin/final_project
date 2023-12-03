@@ -91,9 +91,23 @@ def member_auto_deny(member_id):
 
 
 def advisor_auto_deny(advisor_id):
-    # if count_project(advisor_id) > 10:
-    for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
-        advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+    if count_project(advisor_id) == 5:
+        for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
+            advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+
+
+def call_project_id(member_id):
+    """
+    convert person ID into a list of project ID which the person is in.
+    :param member_id: str of person ID
+    :return: list of str of project ID
+    """
+    project_id_list = []
+    for _project in project.table:
+        if isinproject(member_id, _project):
+            project_id = copy.deepcopy(_project['ID'])
+            project_id_list.append(project_id)
+    return project_id_list
 
 
 def confirm():
@@ -126,6 +140,7 @@ def admin_modify(self):
         print('Modifying canceled')
 
 
+########################################################################################################################
 class Project:
     def __init__(self, ID):
         self.ID = ID
@@ -194,6 +209,7 @@ class Project:
                 print('This project report is approved.')
 
 
+########################################################################################################################
 # define a function called login
 
 def login():
