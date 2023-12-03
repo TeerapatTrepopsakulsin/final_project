@@ -135,6 +135,8 @@ class Project:
         self.member2 = project.get_row(ID, 'member2')
         self.advisor = project.get_row(ID, 'advisor')
         self.status = project.get_row(ID, 'status')
+        self.proposal = project.get_row(ID, 'proposal')
+        self.report = project.get_row(ID, 'report')
         #self.__dict__ = {'ID':self.ID,'title':self.title,'lead':self.lead,'member1':self.member1,'member2':self.member2,'advisor':self.advisor,'status':self.status}
 
     def show(self):
@@ -154,6 +156,15 @@ class Project:
                         print(f"{identify(i['member'])} hasn't responded to the request")
                     else:
                         print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
+
+    def show_proposal(self):
+        print('---Proposal---')
+        print(self.proposal)
+
+    def show_report(self):
+        print('---Report---')
+        print(self.report)
+
 
 # define a function called login
 
@@ -262,7 +273,9 @@ def student():
                                'member1': None,
                                'member2': None,
                                'advisor': None,
-                               'status': 'Not started'}
+                               'status': 'Not started',
+                               'proposal': '',
+                               'report': ''}
                 project.table.append(new_project)
                 login_table.set_row(ID, 'role', 'lead')
                 exit()
@@ -296,6 +309,8 @@ def lead():
                     project_id = copy.deepcopy(_project['ID'])
                     your_project = Project(project_id)
                     your_project.show()
+                    your_project.show_proposal()
+                    your_project.show_report()
         elif choice == 2:
             print(project.table)
             print('modify or not')
@@ -307,10 +322,12 @@ def lead():
                     your_project.show_request()
         elif choice == 4:
             print(member_pending_request.table)
+            # can't send if project in_progress or already 2 members
             print('send request 1 at a time')
             member_pending_request.update('member request')
         elif choice == 5:
             print(advisor_pending_request.table)
+            # can't send if 1 advisor
             print('send request 1 at a time')
             advisor_pending_request.update('advisor request')
         elif choice == 6:
@@ -346,6 +363,8 @@ def member():
                     project_id = copy.deepcopy(_project['ID'])
                     your_project = Project(project_id)
                     your_project.show()
+                    your_project.show_proposal()
+                    your_project.show_report()
         elif choice == 2:
             print(project.table)
             print('modify or not')
