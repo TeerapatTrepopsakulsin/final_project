@@ -48,10 +48,10 @@ def initializing():
     # add all these tables to the database
 
 
-def identify(id):
+def identify(person_id):
     persons_list = copy.deepcopy(persons.table)
     for person in persons_list:
-        if person['ID'] == id:
+        if person['ID'] == person_id:
             return f"{person['fist']} {person['last']}"
     return None
 
@@ -62,23 +62,38 @@ def int_autocorrect(num, a):
     return a
 
 
-def isinproject(id, project):
-    if id in project.values():
+def isinproject(any_id, project):
+    if any_id in project.values():
         return True
     return False
 
 
-def count_requests(self, id):
+def count_project(any_id):
+    count = 0
+    for _project in project.table:
+        if isinproject(any_id, _project):
+            count += 1
+    return count
+
+
+def count_requests(self, any_id):
     count = 0
     for request in self.table:
-        if isinproject(id, request) and request['response'] == '':
+        if isinproject(any_id, request) and request['response'] == '':
             count += 1
     return count
 # return self.filter(lambda x: x['member'] == id and x['response'] == '').aggregate(lambda x: len(x), 'ID')
 
+
 def member_auto_deny(member_id):
     for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
         member_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+
+
+def advisor_auto_deny(advisor_id):
+    # if count_project(advisor_id) > 10:
+    for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
+        advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
 
 def confirm():
