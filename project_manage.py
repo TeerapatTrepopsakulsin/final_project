@@ -68,12 +68,13 @@ def isinproject(id, project):
     return False
 
 
-def count_requests(table, id):
+def count_requests(self, id):
     count = 0
-    for request in table:
+    for request in self.table:
         if isinproject(id, request) and request['response'] == '':
             count += 1
     return count
+# return self.filter(lambda x: x['member'] == id and x['response'] == '').aggregate(lambda x: len(x), 'ID')
 
 
 def confirm():
@@ -187,6 +188,11 @@ def student():
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
                     project_id = copy.deepcopy(request['ID'])
                     your_project = Project(project_id)
+                    n_request = count_requests(member_pending_request, ID)
+                    if n_request >= 2:
+                        print(f"You have {identify(your_project.lead)}'s and {n_request - 1} other requests pending.")
+                    else:
+                        print(f"You have {identify(your_project.lead)}'s request pending.")
                     print(f'{identify(your_project.lead)} want you to join {your_project.title} project.')
                     your_project.show()
                     k += 1
@@ -462,6 +468,7 @@ elif role == 'faculty' or role == 'advisor':
 # member_pending_request.table.append(pending_member1)
 # print(Project('1234567').show())
 # print(count_requests(member_pending_request.table, '0000000'))
+# a = print(a)
 # print(Project('1234567').__dict__)
 # for i in project.table:
 #     if i['ID'] == '2023341':

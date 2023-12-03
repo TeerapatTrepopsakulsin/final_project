@@ -61,7 +61,7 @@ class Table:
         self.table = []
 
     def join(self, other_table, common_key):
-        joined_table = Table(self.table_name + '_joins_' + other_table.table_name, [])
+        joined_table = Table(self.table_name + '_joins_' + other_table.table_name)
         for item1 in self.table:
             for item2 in other_table.table:
                 if item1[common_key] == item2[common_key]:
@@ -72,7 +72,7 @@ class Table:
         return joined_table
 
     def filter(self, condition):
-        filtered_table = Table(self.table_name + '_filtered', [])
+        filtered_table = Table(self.table_name + '_filtered')
         for item1 in self.table:
             if condition(item1):
                 filtered_table.table.append(item1)
