@@ -99,7 +99,7 @@ def confirm():
 
 def create_project_id():
     exist_id = [i['ID'] for i in project.table]
-    selected_id = random.sample([str(i) for i in range(1000000, 9999999) if str(i) not in exist_id], 1)
+    selected_id = random.sample([str(i) for i in range(100000, 999999) if str(i) not in exist_id], 1)
     return selected_id
 
 
