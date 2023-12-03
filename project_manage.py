@@ -157,13 +157,41 @@ class Project:
                     else:
                         print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
 
-    def show_proposal(self):
-        print('---Proposal---')
-        print(self.proposal)
+    def show_proposal(self, member_or_faculty='member'):
+        if member_or_faculty == 'member':
+            print('---Proposal---')
+            print(self.proposal)
+        else:
+            if self.status in ['Not started', 'Initiate']:
+                print("Lead of this project hasn't submit any proposal.")
+            elif self.status == 'Planned':
+                print('---Proposal---')
+                print(self.proposal)
+                print('This project proposal has not been approved.')
+            else:
+                print('---Proposal---')
+                print(self.proposal)
+                print('This project proposal is approved.')
 
-    def show_report(self):
-        print('---Report---')
-        print(self.report)
+    def show_report(self, member_or_faculty='member'):
+        if member_or_faculty == 'member':
+            print('---Report---')
+            print(self.report)
+        else:
+            if self.status in ['Not started', 'Initiate', 'Planned', 'In progress']:
+                print("Lead of this project hasn't submit any report.")
+            elif self.status == 'Reported':
+                print('---Report---')
+                print(self.report)
+                print('This project report has not been approved.')
+            elif self.status == 'Advisor-approved':
+                print('---Report---')
+                print(self.report)
+                print('This project report is waiting for another faculty to approve')
+            else:
+                print('---Report---')
+                print(self.report)
+                print('This project report is approved.')
 
 
 # define a function called login
