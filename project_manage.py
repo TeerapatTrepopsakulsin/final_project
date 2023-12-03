@@ -76,6 +76,10 @@ def count_requests(self, id):
     return count
 # return self.filter(lambda x: x['member'] == id and x['response'] == '').aggregate(lambda x: len(x), 'ID')
 
+def member_auto_deny(member_id):
+    for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
+        member_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+
 
 def confirm():
     print()
@@ -215,6 +219,7 @@ def student():
                             project.set_row(project_id, 'member2', ID)
                         # become member
                         member_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
+                        member_auto_deny(ID)
                         # member_request update
                         login_table.set_row(ID, 'role', 'member')
                         exit()
@@ -234,6 +239,7 @@ def student():
             title = str(input('Please insert the project title: '))
             print('Do you want to create a project')
             if confirm():
+                member_auto_deny(ID)
                 new_project_id = create_project_id()
                 new_project = {'ID': new_project_id[0],
                                'title': title,
