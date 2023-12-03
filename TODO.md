@@ -62,3 +62,19 @@
     5. See all member request status
         * show all member request information
     6. Modify member request information
+
+
+### Note
+- Project status:
+  * not_started 
+    - no advisor
+  * initiate            
+    - advisor supervised
+  * in_progress 
+    - advisor approved proposal
+  * advisor_approved 
+    - advisor approved report
+  * approved 
+    - faculty approved report
+  * completed 
+    - advisor approved project
