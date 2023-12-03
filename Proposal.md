@@ -9,12 +9,12 @@
 - Advisor (An advising faculty)
     * See the request to evaluate project 
     * Choose to approve or disapprove the project under advising
-    * If project is approved, then the project status become 'Advisor approved'
+    * If project is approved, then the project status become 'Advisor-approved'
 
 
 - Faculty (A normal faculty who is not an advisor)
     * See the available project to evaluate
-    * Choose to approve the project under status 'advisor_approved'
+    * Choose to approve the project under status 'Advisor-approved'
     * If project is approved from more than at least 1
  faculty, then the project status become 'Approved'
 

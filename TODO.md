@@ -67,14 +67,18 @@
 ### Note
 - Project status:
   * Not started 
-    - no advisor
+    - no advisor supervised
   * Initiate            
-    - advisor supervised
+    - advisor has supervised
+  * Planned
+    - lead sent the proposal to advisor
   * In progress 
     - advisor approved proposal
-  * Advisor approved 
+  * Reported
+    - lead sent the report to advisor
+  * Advisor-approved 
     - advisor approved report
   * Approved 
-    - faculty approved report
+    - another faculty approved report
   * Completed 
     - advisor approved project
