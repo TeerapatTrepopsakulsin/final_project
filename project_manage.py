@@ -76,18 +76,6 @@ def count_requests(table, id):
     return count
 
 
-def set_row(table, id_value, update_attribute, update_value):
-    for i in table:
-        if i['ID'] == id_value:
-            i[update_attribute] = update_value
-
-
-def get_row(table, id_value, attribute):
-    for i in table:
-        if i['ID'] == id_value:
-            return i[attribute]
-
-
 def confirm():
     print()
     print('Press only Enter to Confirm')
@@ -103,32 +91,30 @@ def create_project_id():
     return selected_id
 
 
-def admin_modify(table):
-    for request in table:
+def admin_modify(self):
+    for request in self.table:
         print(request)
     project_id = input('Input project ID to modify ')
     attribute = input('Input attribute that you want to modify ')
-    print(f'{project_id} {attribute} is currently {get_row(table, project_id, attribute)}.')
+    print(f'{project_id} {attribute} is currently {self.get_row(project_id, attribute)}.')
     new_value = input('Insert new value ')
     print('Do you want to modify?')
     if confirm():
-        set_row(table, project_id, attribute, new_value)
+        self.set_row(project_id, attribute, new_value)
         print('Modifying completed')
-        print()
     else:
         print('Modifying canceled')
-        print()
 
 
 class Project:
     def __init__(self, ID):
         self.ID = ID
-        self.title = get_row(project.table, ID, 'title')
-        self.lead = get_row(project.table, ID, 'lead')
-        self.member1 = get_row(project.table, ID, 'member1')
-        self.member2 = get_row(project.table, ID, 'member2')
-        self.advisor = get_row(project.table, ID, 'advisor')
-        self.status = get_row(project.table, ID, 'status')
+        self.title = project.get_row(ID, 'title')
+        self.lead = project.get_row(ID, 'lead')
+        self.member1 = project.get_row(ID, 'member1')
+        self.member2 = project.get_row(ID, 'member2')
+        self.advisor = project.get_row(ID, 'advisor')
+        self.status = project.get_row(ID, 'status')
         #self.__dict__ = {'ID':self.ID,'title':self.title,'lead':self.lead,'member1':self.member1,'member2':self.member2,'advisor':self.advisor,'status':self.status}
 
     def show(self):
@@ -196,7 +182,6 @@ def student():
     print()
     while choice != 3:
         if choice == 1:
-            print()
             k = 0
             for request in member_pending_request.table:
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
@@ -214,30 +199,27 @@ def student():
                 print('2. Deny')
                 print('3. Cancel')
                 choice = int(input('Input number(1-3): '))
+                print()
                 if choice == 1:
-                    print('Are you sure?')
+                    print('Are you sure? (Accept)')
                     if confirm():
                         if your_project.member1 == '':
-                            set_row(project.table, project_id, 'member1', ID)
+                            project.set_row(project_id, 'member1', ID)
                         elif your_project.member2 == '':
-                            set_row(project.table, project_id, 'member2', ID)
+                            project.set_row(project_id, 'member2', ID)
                         # become member
-                        set_row(member_pending_request.table, project_id, 'response', 'Accepted')
-                        set_row(member_pending_request.table, project_id, 'response_date',
-                                strftime("%d/%b/%Y", localtime(time())))
+                        member_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
                         # member_request update
-                        set_row(login_table.table, ID, 'role', 'member')
+                        login_table.set_row(ID, 'role', 'member')
                         exit()
                         sys.exit('Changing you role to Member. Automatic Logout')
                         # login update
                     else:
                         print('Accepting canceled')
                 elif choice == 2:
-                    print('Are you sure?')
+                    print('Are you sure? (Deny)')
                     if confirm():
-                        set_row(member_pending_request.table, project_id, 'response', 'Denied')
-                        set_row(member_pending_request.table, project_id, 'response_date',
-                                strftime("%d/%b/%Y", localtime(time())))
+                        member_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
                         # member_request update
                         print('Denying confirmed')
                     else:
@@ -255,7 +237,7 @@ def student():
                                'advisor': None,
                                'status': 'Not started'}
                 project.table.append(new_project)
-                set_row(login_table.table, ID, 'role', 'lead')
+                login_table.set_row(ID, 'role', 'lead')
                 exit()
                 sys.exit('Changing you role to Lead. Automatic Logout')
             else:
@@ -422,19 +404,19 @@ def admin():
             for _project in project.table:
                 print(_project)
         elif choice == 2:
-            table = copy.deepcopy(project.table)
+            table = copy.deepcopy(project)
             admin_modify(table)
         elif choice == 3:
             for request in member_pending_request.table:
                 print(request)
         elif choice == 4:
-            table = copy.deepcopy(member_pending_request.table)
+            table = copy.deepcopy(member_pending_request)
             admin_modify(table)
         elif choice == 5:
             for request in advisor_pending_request.table:
                 print(request)
         elif choice == 6:
-            table = copy.deepcopy(advisor_pending_request.table)
+            table = copy.deepcopy(advisor_pending_request)
             admin_modify(table)
         print()
         print('Select your action')
@@ -480,10 +462,12 @@ elif role == 'faculty' or role == 'advisor':
 # member_pending_request.table.append(pending_member1)
 # print(Project('1234567').show())
 # print(count_requests(member_pending_request.table, '0000000'))
-print(Project('1234567').__dict__)
-for i in project.table:
-    if i['ID'] == '2023341':
-        i.update({'ID': '2023341', 'title': 'colourblind', 'lead': '1235567', 'member1': '1234568', 'member2': '0000000', 'advisor': '1234888', 'status': 'nothing'})
+# print(Project('1234567').__dict__)
+# for i in project.table:
+#     if i['ID'] == '2023341':
+#         i.update({'ID': '2023341', 'title': 'colourblind', 'lead': '1235567', 'member1': '1234568', 'member2': '0000000', 'advisor': '1234888', 'status': 'nothing'})
+# login_table.set_row('0000000','password','5').set_row('0000000','username','4').set_row('1234567', 'response', 'Denied').
+# member_pending_request.set_row('1234567', 'response_date',strftime("%d/%b/%Y", localtime(time())))
 
 exit()
 

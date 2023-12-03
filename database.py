@@ -109,7 +109,15 @@ class Table:
     def __str__(self):
         return self.table_name + ':' + str(self.table)
 
+    def set_row(self, id_value, update_attribute, update_value):
+        for item in self.table:
+            if item['ID'] == id_value:
+                item[update_attribute] = update_value
+        set_table = Table(self.table_name + '_set')
+        set_table.table = copy.copy(self.table)
+        return set_table
 
-# persons = Table('persons')
-# persons.insert('persons.csv')
-# print(persons.table)
+    def get_row(self, id_value, attribute):
+        for item in self.table:
+            if item['ID'] == id_value:
+                return item[attribute]
