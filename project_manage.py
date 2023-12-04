@@ -1,9 +1,9 @@
 import copy
 import random
 import sys
-import database
 import csv
 from time import time, strftime, localtime
+import database
 
 # define a function called initializing
 
@@ -96,15 +96,16 @@ def advisor_auto_deny(advisor_id):
             advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
 
-def call_project_id(member_id):
+def call_project_id(person_id):
     """
     convert person ID into a list of project ID which the person is in.
-    :param member_id: str of person ID
+    can only use for project.csv
+    :param person_id: str of person ID
     :return: list of str of project ID
     """
     project_id_list = []
     for _project in project.table:
-        if isinproject(member_id, _project):
+        if isinproject(person_id, _project):
             project_id = copy.deepcopy(_project['ID'])
             project_id_list.append(project_id)
     return project_id_list
@@ -348,22 +349,18 @@ def lead():
     print()
     while choice != 7:
         if choice == 1:
-            for _project in project.table:
-                if isinproject(ID, _project):
-                    project_id = copy.deepcopy(_project['ID'])
-                    your_project = Project(project_id)
-                    your_project.show()
-                    your_project.show_proposal()
-                    your_project.show_report()
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.show()
+                your_project.show_proposal()
+                your_project.show_report()
         elif choice == 2:
             print(project.table)
             print('modify or not')
         elif choice == 3:
-            for _project in project.table:
-                if isinproject(ID, _project):
-                    project_id = copy.deepcopy(_project['ID'])
-                    your_project = Project(project_id)
-                    your_project.show_request()
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.show_request()
         elif choice == 4:
             print(member_pending_request.table)
             # can't send if project in_progress or already 2 members
@@ -402,22 +399,18 @@ def member():
     print()
     while choice != 4:
         if choice == 1:
-            for _project in project.table:
-                if isinproject(ID, _project):
-                    project_id = copy.deepcopy(_project['ID'])
-                    your_project = Project(project_id)
-                    your_project.show()
-                    your_project.show_proposal()
-                    your_project.show_report()
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.show()
+                your_project.show_proposal()
+                your_project.show_report()
         elif choice == 2:
             print(project.table)
             print('modify or not')
         elif choice == 3:
-            for _project in project.table:
-                if isinproject(ID, _project):
-                    project_id = copy.deepcopy(_project['ID'])
-                    your_project = Project(project_id)
-                    your_project.show_request()
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.show_request()
         print()
         print('Select your action')
         print('1. See project status')
@@ -450,11 +443,9 @@ def faculty():
             print()
             while choice != 3:
                 if choice == 1:
-                    for _project in project.table:
-                        if isinproject(ID, _project):
-                            project_id = copy.deepcopy(_project['ID'])
-                            your_project = Project(project_id)
-                            your_project.show()
+                    for project_id in call_project_id(ID):
+                        your_project = Project(project_id)
+                        your_project.show()
                 elif choice == 2:
                     for _project in project.table:
                         if not isinproject(ID, _project):
@@ -544,7 +535,7 @@ elif role == 'member':
     member()
 elif role == 'lead':
     lead()
-elif role == 'faculty' or role == 'advisor':
+elif role in ('faculty', 'advisor'):
     faculty()
 
 # once everything is done, make a call to the exit function

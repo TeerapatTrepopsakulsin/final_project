@@ -1,4 +1,5 @@
-# try wrapping the code below that reads a persons.csv file in a class and make it more general such that it can read in any csv file
+# try wrapping the code below that reads a persons.csv file in a class
+# and make it more general such that it can read in any csv file
 
 import csv
 import os
@@ -16,9 +17,11 @@ import copy
 
 # add in code for a Table class
 
-# modify the code in the Table class so that it supports the insert operation where an entry can be added to a list of dictionary
+# modify the code in the Table class so that
+# it supports the insert operation where an entry can be added to a list of dictionary
 
-# modify the code in the Table class so that it supports the update operation where an entry's value associated with a key can be updated
+# modify the code in the Table class so that
+# it supports the update operation where an entry's value associated with a key can be updated
 
 
 class Database:
@@ -121,3 +124,4 @@ class Table:
         for item in self.table:
             if item['ID'] == id_value:
                 return item[attribute]
+        return None
