@@ -219,9 +219,10 @@ class Project:
             print('2. Modify project proposal')
             print('3. Cancel')
             choice = int(input('Input number(1-3): '))
-            if choice == '1':
+            print()
+            if choice == 1:
                 print(f'Current project title: {self.title}')
-                new_title = input('Insert new title')
+                new_title = input('Insert new title ')
                 print('Do you want to change?')
                 if confirm():
                     self.title = new_title
@@ -229,10 +230,10 @@ class Project:
                     print('Modifying completed')
                 else:
                     print('Modifying canceled')
-            elif choice == '2':
+            elif choice == 2:
                 self.show_proposal()
                 print()
-                new_proposal = input('Insert new proposal')
+                new_proposal = input('Insert new proposal ')
                 print('Do you want to modify?')
                 if confirm():
                     self.proposal = new_proposal
@@ -244,10 +245,11 @@ class Project:
             print('1. Modify project report')
             print('2. Cancel')
             choice = int(input('Input number(1-2): '))
-            if choice == '1':
+            print()
+            if choice == 1:
                 self.show_report()
                 print()
-                new_report = input('Insert new report')
+                new_report = input('Insert new report ')
                 print('Do you want to modify?')
                 if confirm():
                     self.report = new_report
@@ -402,8 +404,9 @@ def lead():
                 your_project.show_proposal()
                 your_project.show_report()
         elif choice == 2:
-            print(project.table)
-            print('modify or not')
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.modify()
         elif choice == 3:
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
@@ -452,8 +455,9 @@ def member():
                 your_project.show_proposal()
                 your_project.show_report()
         elif choice == 2:
-            print(project.table)
-            print('modify or not')
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                your_project.modify()
         elif choice == 3:
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
