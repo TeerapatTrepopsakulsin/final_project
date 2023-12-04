@@ -86,15 +86,25 @@ def count_requests(self, any_id):
 
 
 def member_auto_deny(member_id):
+    """deny all request when become member of the project"""
     for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
         member_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
 
 def advisor_auto_deny(advisor_id):
+    """deny all request when become advisor of 5 projects"""
     if count_project(advisor_id) == 5:
         for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
             advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
+def request_auto_invalid(project_id):
+    """request become invalid if and only if project is in progress or project member is full"""
+    your_project = Project(project_id)
+    if your_project.status not in ('Not started', 'Initiate', 'Planned') or your_project.member2 not in (None, ''):
+        for request in member_pending_request.filter(lambda x: x['response'] == '' and x['ID'] == your_project.ID).table:
+            member_pending_request.set_row(your_project.ID, 'response', 'Invalid').set_row(request['ID'], 'response_date',
+                                                                                        strftime("%d/%b/%Y",
+                                                                                                 localtime(time())))
 
 def call_project_id(person_id):
     """
@@ -508,6 +518,7 @@ def faculty():
         elif choice == 3:
             print(project.table)
             print('pass or not')
+            # if proposal pass the pending request invalid.
         elif choice == 4:
             print(project.table)
             print('Approve or not')
