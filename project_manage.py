@@ -155,6 +155,9 @@ class Project:
         self.report = project.get_row(ID, 'report')
         #self.__dict__ = {'ID':self.ID,'title':self.title,'lead':self.lead,'member1':self.member1,'member2':self.member2,'advisor':self.advisor,'status':self.status}
 
+    def update(self):
+        project.update(self.ID, self.__dict__)
+
     def show(self):
         print(f'Project title: {self.title}\n'
                 f'Lead: {identify(self.lead)}\n'
@@ -208,6 +211,50 @@ class Project:
                 print('---Report---')
                 print(self.report)
                 print('This project report is approved.')
+
+    def modify(self):
+        if self.status in ('Not started', 'Initiate', 'Planned'):
+            print('Select your action')
+            print('1. Change project title')
+            print('2. Modify project proposal')
+            print('3. Cancel')
+            choice = int(input('Input number(1-3): '))
+            if choice == '1':
+                print(f'Current project title: {self.title}')
+                new_title = input('Insert new title')
+                print('Do you want to change?')
+                if confirm():
+                    self.title = new_title
+                    self.update()
+                    print('Modifying completed')
+                else:
+                    print('Modifying canceled')
+            elif choice == '2':
+                self.show_proposal()
+                print()
+                new_proposal = input('Insert new proposal')
+                print('Do you want to modify?')
+                if confirm():
+                    self.proposal = new_proposal
+                    self.update()
+                    print('Modifying completed')
+                else:
+                    print('Modifying canceled')
+        else:
+            print('1. Modify project report')
+            print('2. Cancel')
+            choice = int(input('Input number(1-2): '))
+            if choice == '1':
+                self.show_report()
+                print()
+                new_report = input('Insert new report')
+                print('Do you want to modify?')
+                if confirm():
+                    self.report = new_report
+                    self.update()
+                    print('Modifying completed')
+                else:
+                    print('Modifying canceled')
 
 
 ########################################################################################################################
