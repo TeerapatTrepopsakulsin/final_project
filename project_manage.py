@@ -133,9 +133,12 @@ def isinrequest(project_id, person_id):
 
 
 def show_person(role_list, exclude_project_id):
+    available_id = []
     for person in login_table.table:
-        if person['role'] in role_list and not isinrequest(exclude_project_id, person['ID']):
+        if person['role'] in role_list and not isinrequest(exclude_project_id, person['ID']) and len(call_project_id(person['ID'])) < 5:
             print(f"{person['ID']:^9} | {identify(person['ID']):<18} | Role: {person['role']}")
+            available_id.append(person['ID'])
+    return available_id
 
 
 def confirm():
@@ -195,13 +198,21 @@ class Project:
 
     def show_request(self):
         print('--Request history--')
+        k = 0
         for table in [member_pending_request.table, advisor_pending_request.table]:
             for i in table:
                 if i['ID'] == self.ID:
-                    if i['response'] in ('', 'Invalid'):
-                        print(f"{identify(i['member'])} hasn't responded to the request")
-                    else:
-                        print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
+                    if k == 0:
+                        if i['response'] in ('', 'Invalid'):
+                            print(f"{identify(i['member'])} hasn't responded to the request")
+                        else:
+                            print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
+                    elif k == 1:
+                        if i['response'] in ('', 'Invalid'):
+                            print(f"{identify(i['advisor'])} hasn't responded to the request")
+                        else:
+                            print(f"{identify(i['advisor'])} had {i['response']} the request on {i['response_date']}")
+            k += 1
 
     def show_proposal(self, member_or_faculty='member'):
         if member_or_faculty == 'member':
@@ -451,9 +462,13 @@ def lead():
                 else:
                     print('Available students')
                     print()
-                    show_person(['student'], project_id)
+                    available_id = show_person(['student'], project_id)
                     print()
-                    member_id = input('Insert ID of the person you want: ')
+                    while True:
+                        member_id = input('Insert ID of the person you want: ')
+                        if member_id in available_id:
+                            break
+                        print('Incorrect ID. Please try again')
                     print('Are you sure to send a request?')
                     if confirm():
                         new_request = {'ID': project_id,
@@ -466,10 +481,34 @@ def lead():
                         print('Sending canceled')
             # can't send if project in_progress or already 2 members or 3 requests
         elif choice == 5:
-            print(advisor_pending_request.table)
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                if count_requests(advisor_pending_request, your_project.ID) >= 1:
+                    print('Pending requests reach limit.')
+                elif your_project.advisor not in (None, ''):
+                    print('Advisor reach limit.')
+                else:
+                    print('Available students')
+                    print()
+                    available_id = show_person(['faculty', 'advisor'], project_id)
+                    # not over 5
+                    print()
+                    while True:
+                        advisor_id = input('Insert ID of the faculty you want: ')
+                        if advisor_id in available_id:
+                            break
+                        print('Incorrect ID. Please try again')
+                    print('Are you sure to send a request?')
+                    if confirm():
+                        new_request = {'ID': project_id,
+                                       'advisor': advisor_id,
+                                       'response': '',
+                                       'response_date': ''}
+                        advisor_pending_request.table.append(new_request)
+                        print('Sending confirmed')
+                    else:
+                        print('Sending canceled')
             # can't send if 1 advisor or 1 request
-            print('send request 1 at a time')
-            # advisor_pending_request.update('advisor request')
         elif choice == 6:
             print(project.table)
             print('request confirm?')

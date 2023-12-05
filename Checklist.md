@@ -6,8 +6,8 @@
     1. See project status ///
     2. Modify project information ///
     3. Requests history ///
-    4. Send out members requests
-    5. Send out advisor requests
+    4. Send out members requests ///
+    5. Send out advisor requests ///
     6. Request for project evaluation
 
 ### member(): ///
