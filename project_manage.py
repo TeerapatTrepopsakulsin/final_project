@@ -124,10 +124,20 @@ def call_project_id(person_id):
     return project_id_list
 
 
-def show_person(role_list):
+def isinrequest(project_id, person_id):
+    for table in member_pending_request.table, advisor_pending_request.table:
+        for request in table:
+            if request['ID'] == project_id and isinproject(person_id, request):
+                return True
+    return False
+
+
+def show_person(role_list, exclude_project_id):
     for person in login_table.table:
         if person['role'] in role_list:
             print(f"{person['ID']:^9} | {identify(person['ID']):<18} | Role: {person['role']}")
+
+
 
 def confirm():
     print()
@@ -383,9 +393,9 @@ def student():
                 new_project = {'ID': new_project_id[0],
                                'title': title,
                                'lead': ID,
-                               'member1': None,
-                               'member2': None,
-                               'advisor': None,
+                               'member1': '',
+                               'member2': '',
+                               'advisor': '',
                                'status': 'Not started',
                                'proposal': '',
                                'report': ''}
@@ -440,19 +450,27 @@ def lead():
                 elif your_project.member2 not in (None, ''):
                     print('Members reach limit.')
                 else:
-                    print('Available student')
+                    print('Available students')
                     print()
                     show_person(['student'])
                     print()
-
+                    member_id = input('Insert ID of the person you want: ')
+                    print('Are you sure to send a request?')
+                    if confirm():
+                        new_request = {'ID': project_id,
+                                       'member': member_id,
+                                       'response': '',
+                                       'response_date': ''}
+                        member_pending_request.table.append(new_request)
+                        print('Sending confirmed')
+                    else:
+                        print('Sending canceled')
             # can't send if project in_progress or already 2 members or 3 requests
-            print('send request 1 at a time')
-            member_pending_request.update('member request')
         elif choice == 5:
             print(advisor_pending_request.table)
             # can't send if 1 advisor or 1 request
             print('send request 1 at a time')
-            advisor_pending_request.update('advisor request')
+            # advisor_pending_request.update('advisor request')
         elif choice == 6:
             print(project.table)
             print('request confirm?')
