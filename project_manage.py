@@ -134,9 +134,8 @@ def isinrequest(project_id, person_id):
 
 def show_person(role_list, exclude_project_id):
     for person in login_table.table:
-        if person['role'] in role_list:
+        if person['role'] in role_list and not isinrequest(exclude_project_id, person['ID']):
             print(f"{person['ID']:^9} | {identify(person['ID']):<18} | Role: {person['role']}")
-
 
 
 def confirm():
@@ -199,7 +198,7 @@ class Project:
         for table in [member_pending_request.table, advisor_pending_request.table]:
             for i in table:
                 if i['ID'] == self.ID:
-                    if i['response'] == '':
+                    if i['response'] in ('', 'Invalid'):
                         print(f"{identify(i['member'])} hasn't responded to the request")
                     else:
                         print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
@@ -452,7 +451,7 @@ def lead():
                 else:
                     print('Available students')
                     print()
-                    show_person(['student'])
+                    show_person(['student'], project_id)
                     print()
                     member_id = input('Insert ID of the person you want: ')
                     print('Are you sure to send a request?')
