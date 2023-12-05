@@ -431,11 +431,13 @@ def lead():
     print('3. Requests history')
     print('4. Send out members requests')
     print('5. Send out advisor requests')
-    print('6. Request for project evaluation')
-    print('7. Exit')
-    choice = int(input('Input number(1-7): '))
+    print('6. Cancel members requests')
+    print('7. Cancel advisor requests')
+    print('8. Request for project evaluation')
+    print('9. Exit')
+    choice = int(input('Input number(1-9): '))
     print()
-    while choice != 7:
+    while choice != 9:
         if choice == 1:
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
@@ -510,6 +512,34 @@ def lead():
                         print('Sending canceled')
             # can't send if 1 advisor or 1 request
         elif choice == 6:
+            if count_requests(member_pending_request, call_project_id(ID)[0]) <= 0:
+                print('You have no member pending request')
+            else:
+                print('Pending member request')
+                print()
+                available_id = []
+                for request in member_pending_request.table:
+                    if isinproject(call_project_id(ID)[0], request) and request['response'] == '':
+                        print(f"{request['member']:^9} | {identify(request['member']):<18} | Waiting...")
+                        available_id.append(request['member'])
+                print()
+                while True:
+                    member_id = input('Insert ID of the person you want to cancel: ')
+                    if member_id in available_id:
+                        break
+                    print('Incorrect ID. Please try again')
+                print('Are you sure to cancel the request?')
+                if confirm():
+                    member_pending_request.table.remove(
+                        {'ID': call_project_id(ID)[0], 'member': member_id, 'response': '', 'response_date': ''})
+                    print('Cancelling confirmed')
+                else:
+                    print('Cancelling canceled')
+        # cancel members requests
+        elif choice == 7:
+            pass
+        # Cancel advisor requests
+        elif choice == 8:
             print(project.table)
             print('request confirm?')
             # change project status
@@ -521,9 +551,11 @@ def lead():
         print('3. Requests history')
         print('4. Send out members requests')
         print('5. Send out advisor requests')
-        print('6. Request for project evaluation')
-        print('7. Exit')
-        choice = int(input('Input number(1-7): '))
+        print('6. Cancel members requests')
+        print('7. Cancel advisor requests')
+        print('8. Request for project evaluation')
+        print('9. Exit')
+        choice = int(input('Input number(1-9): '))
         print()
 
 
