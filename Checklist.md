@@ -9,6 +9,8 @@
     4. Send out members requests ///
     5. Send out advisor requests ///
     6. Request for project evaluation
+    7. Cancel members requests ???
+    8. Cancel advisor requests ???
 
 ### member(): ///
     1. See project status ///
