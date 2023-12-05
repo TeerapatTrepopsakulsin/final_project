@@ -1,11 +1,12 @@
 import copy
-import random
 import sys
 import csv
+from random import sample
 from time import time, strftime, localtime
 import database
 
 # define a function called initializing
+
 
 def initializing():
     DB = database.Database()
@@ -97,6 +98,7 @@ def advisor_auto_deny(advisor_id):
         for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
             advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
+
 def request_auto_invalid(project_id):
     """request become invalid if and only if project is in progress or project member is full"""
     your_project = Project(project_id)
@@ -105,6 +107,7 @@ def request_auto_invalid(project_id):
             member_pending_request.set_row(your_project.ID, 'response', 'Invalid').set_row(request['ID'], 'response_date',
                                                                                         strftime("%d/%b/%Y",
                                                                                                  localtime(time())))
+
 
 def call_project_id(person_id):
     """
@@ -132,7 +135,7 @@ def confirm():
 
 def create_project_id():
     exist_id = [i['ID'] for i in project.table]
-    selected_id = random.sample([str(i) for i in range(100000, 999999) if str(i) not in exist_id], 1)
+    selected_id = sample([str(i) for i in range(100000, 999999) if str(i) not in exist_id], 1)
     return selected_id
 
 
@@ -207,7 +210,7 @@ class Project:
             print('---Report---')
             print(self.report)
         else:
-            if self.status in ['Not started', 'Initiate', 'Planned', 'In progress']:
+            if self.status in ('Not started', 'Initiate', 'Planned', 'In progress'):
                 print("Lead of this project hasn't submit any report.")
             elif self.status == 'Reported':
                 print('---Report---')
@@ -350,6 +353,7 @@ def student():
                         # become member
                         member_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
                         member_auto_deny(ID)
+                        request_auto_invalid(project_id)
                         # member_request update
                         login_table.set_row(ID, 'role', 'member')
                         exit()
@@ -422,8 +426,17 @@ def lead():
                 your_project = Project(project_id)
                 your_project.show_request()
         elif choice == 4:
-            print(member_pending_request.table)
-            # can't send if project in_progress or already 2 members
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                if count_requests(member_pending_request, your_project.ID) >= 3:
+                    print('Pending requests reach limit.')
+                elif your_project.status not in ('Not started', 'Initiate', 'Planned'):
+                    print('Your project already in progress.')
+                elif your_project.member2 not in (None, ''):
+                    print('Members reach limit.')
+                else:
+
+            # can't send if project in_progress or already 2 members or 3 requests
             print('send request 1 at a time')
             member_pending_request.update('member request')
         elif choice == 5:
@@ -576,7 +589,7 @@ def admin():
         print()
 
 
-        # make calls to the initializing and login functions defined above
+# make calls to the initializing and login functions defined above
 
 initializing()
 val = login()
