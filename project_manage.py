@@ -53,7 +53,7 @@ def identify(person_id):
     persons_list = copy.deepcopy(persons.table)
     for person in persons_list:
         if person['ID'] == person_id:
-            return f"{person['fist']} {person['last']}"
+            return f"{person['first']} {person['last']}"
     return None
 
 
@@ -123,6 +123,11 @@ def call_project_id(person_id):
             project_id_list.append(project_id)
     return project_id_list
 
+
+def show_person(role_list):
+    for person in login_table.table:
+        if person['role'] in role_list:
+            print(f"{person['ID']:^9} | {identify(person['ID']):<18} | Role: {person['role']}")
 
 def confirm():
     print()
@@ -435,13 +440,17 @@ def lead():
                 elif your_project.member2 not in (None, ''):
                     print('Members reach limit.')
                 else:
+                    print('Available student')
+                    print()
+                    show_person(['student'])
+                    print()
 
             # can't send if project in_progress or already 2 members or 3 requests
             print('send request 1 at a time')
             member_pending_request.update('member request')
         elif choice == 5:
             print(advisor_pending_request.table)
-            # can't send if 1 advisor
+            # can't send if 1 advisor or 1 request
             print('send request 1 at a time')
             advisor_pending_request.update('advisor request')
         elif choice == 6:
@@ -627,6 +636,7 @@ elif role in ('faculty', 'advisor'):
 #         i.update({'ID': '2023341', 'title': 'colourblind', 'lead': '1235567', 'member1': '1234568', 'member2': '0000000', 'advisor': '1234888', 'status': 'nothing'})
 # login_table.set_row('0000000','password','5').set_row('0000000','username','4').set_row('1234567', 'response', 'Denied').
 # member_pending_request.set_row('1234567', 'response_date',strftime("%d/%b/%Y", localtime(time())))
-
+# a = persons.select(['ID'])
+# print(a)
 exit()
 
