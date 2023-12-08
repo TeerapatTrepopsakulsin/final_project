@@ -20,7 +20,7 @@
 ### faculty():
     1. Requests ///
     2. See project status ///
-    3. Evaluate project
+    3. Evaluate project ///
     4. Approve project
 
 ### admin(): ///
