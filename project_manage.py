@@ -204,14 +204,14 @@ class Project:
                 if i['ID'] == self.ID:
                     if k == 0:
                         if i['response'] in ('', 'Invalid'):
-                            print(f"{identify(i['member'])} hasn't responded to the request")
+                            print(f"{identify(i['member'])} hasn't responded to the member request")
                         else:
-                            print(f"{identify(i['member'])} had {i['response']} the request on {i['response_date']}")
+                            print(f"{identify(i['member'])} had {i['response']} the member request on {i['response_date']}")
                     elif k == 1:
                         if i['response'] in ('', 'Invalid'):
-                            print(f"{identify(i['advisor'])} hasn't responded to the request")
+                            print(f"{identify(i['advisor'])} hasn't responded to the advisor request")
                         else:
-                            print(f"{identify(i['advisor'])} had {i['response']} the request on {i['response_date']}")
+                            print(f"{identify(i['advisor'])} had {i['response']} the advisor request on {i['response_date']}")
             k += 1
 
     def show_proposal(self, member_or_faculty='member'):
@@ -490,13 +490,13 @@ def lead():
                 elif your_project.advisor not in (None, ''):
                     print('Advisor reach limit.')
                 else:
-                    print('Available students')
+                    print('Available faculties')
                     print()
                     available_id = show_person(['faculty', 'advisor'], project_id)
                     # not over 5
                     print()
                     while True:
-                        advisor_id = input('Insert ID of the faculty you want: ')
+                        advisor_id = input('Insert ID of the faculty you want to be supervised: ')
                         if advisor_id in available_id:
                             break
                         print('Incorrect ID. Please try again')
@@ -512,14 +512,15 @@ def lead():
                         print('Sending canceled')
             # can't send if 1 advisor or 1 request
         elif choice == 6:
-            if count_requests(member_pending_request, call_project_id(ID)[0]) <= 0:
+            project_id = call_project_id(ID)[0]
+            if count_requests(member_pending_request, project_id) <= 0:
                 print('You have no member pending request')
             else:
                 print('Pending member request')
                 print()
                 available_id = []
                 for request in member_pending_request.table:
-                    if isinproject(call_project_id(ID)[0], request) and request['response'] == '':
+                    if isinproject(project_id, request) and request['response'] == '':
                         print(f"{request['member']:^9} | {identify(request['member']):<18} | Waiting...")
                         available_id.append(request['member'])
                 print()
@@ -531,13 +532,36 @@ def lead():
                 print('Are you sure to cancel the request?')
                 if confirm():
                     member_pending_request.table.remove(
-                        {'ID': call_project_id(ID)[0], 'member': member_id, 'response': '', 'response_date': ''})
+                        {'ID': project_id, 'member': member_id, 'response': '', 'response_date': ''})
                     print('Cancelling confirmed')
                 else:
                     print('Cancelling canceled')
         # cancel members requests
         elif choice == 7:
-            pass
+            project_id = call_project_id(ID)[0]
+            if count_requests(advisor_pending_request, project_id) <= 0:
+                print('You have no advisor pending request')
+            else:
+                print('Pending advisor request')
+                print()
+                available_id = []
+                for request in advisor_pending_request.table:
+                    if isinproject(project_id, request) and request['response'] == '':
+                        print(f"{request['advisor']:^9} | {identify(request['advisor']):<18} | Waiting...")
+                        available_id.append(request['advisor'])
+                print()
+                while True:
+                    advisor_id = input('Insert ID of the faculty you want to cancel: ')
+                    if advisor_id in available_id:
+                        break
+                    print('Incorrect ID. Please try again')
+                print('Are you sure to cancel the request?')
+                if confirm():
+                    advisor_pending_request.table.remove(
+                        {'ID': project_id, 'advisor': advisor_id, 'response': '', 'response_date': ''})
+                    print('Cancelling confirmed')
+                else:
+                    print('Cancelling canceled')
         # Cancel advisor requests
         elif choice == 8:
             print(project.table)
