@@ -738,9 +738,79 @@ def faculty():
                 choice = int(input('Input number(1-3): '))
                 print()
         elif choice == 3:
-            print(project.table)
-            print('pass or not')
-            # if proposal pass the pending request invalid.
+            print('Select your project type to evaluate')
+            print('1. Under supervising project')
+            print('2. Other project')
+            print('3. Cancel')
+            choice = int(input('Input number(1-3): '))
+            print()
+            if choice == 1:
+                k = 0
+                print('Project')
+                print()
+                for project_id in call_project_id(ID):
+                    your_project = Project(project_id)
+                    if your_project.status in ('Planned', 'Reported'):
+                        k += 1
+                        print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+                if k == 0:
+                    print('You have no project to evaluate.')
+                else:
+                    print()
+                    while True:
+                        project_id = input('Insert ID of the project you want to evaluate: ')
+                        if project_id in call_project_id(ID):
+                            break
+                        print('Incorrect ID. Please try again')
+                    if your_project.status == 'Planned':
+                        your_project.show_proposal()
+                    elif your_project.status == 'Reported':
+                        your_project.show_report()
+                    print('Please take your time to evaluate...')
+                    print()
+                    print('Evaluation result')
+                    print('1. Pass')
+                    print('2. Not pass')
+                    print('3. Cancel')
+                    choice = int(input('Input number(1-3): '))
+                    print()
+                    if choice == 1:
+                        print('PASS')
+                        if confirm():
+                            if your_project.status == 'Planned':
+                                your_project.status = 'In Progress'
+                                request_auto_invalid(project_id)
+                                # if proposal pass the pending request invalid.
+                            elif your_project.status == 'Reported':
+                                your_project.status = 'Advisor-approved'
+                            your_project.update()
+                            print('Evaluation confirmed')
+                        else:
+                            print('Evaluation canceled')
+                    elif choice == 2:
+                        print('NOT PASS')
+                        if confirm():
+                            if your_project.status == 'Planned':
+                                your_project.status = 'Initiate'
+                            elif your_project.status == 'Reported':
+                                your_project.status = 'In progress'
+                            your_project.update()
+                            print('Evaluation confirmed')
+                        else:
+                            print('Evaluation canceled')
+            elif choice == 2:
+                k = 0
+                print('Project')
+                print()
+                for _project in project.table:
+                    if project_id not in call_project_id(ID) and _project['status'] == 'Reported':
+                        your_project = Project(project_id)
+                        k += 1
+                        print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+                if k == 0:
+                    print('There is no project to evaluate.')
+                else:
+                    pass
         elif choice == 4:
             print(project.table)
             print('Approve or not')
