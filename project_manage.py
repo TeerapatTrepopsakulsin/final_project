@@ -372,9 +372,12 @@ def student():
                     print('Are you sure? (Accept)')
                     if confirm():
                         if your_project.member1 == '':
-                            project.set_row(project_id, 'member1', ID)
+                            your_project.member1 = ID
+                            # project.set_row(project_id, 'member1', ID)
                         elif your_project.member2 == '':
-                            project.set_row(project_id, 'member2', ID)
+                            your_project.member2 = ID
+                            # project.set_row(project_id, 'member2', ID)
+                        your_project.update()
                         # become member
                         member_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
                         member_auto_deny(ID)
@@ -564,9 +567,34 @@ def lead():
                     print('Cancelling canceled')
         # Cancel advisor requests
         elif choice == 8:
-            print(project.table)
-            print('request confirm?')
-            # change project status
+            project_id = call_project_id(ID)[0]
+            your_project = Project(project_id)
+            if your_project.status == 'Initiate':
+                your_project.show_proposal()
+                print('Are you sure to send the request? (Proposal evaluation)')
+                if confirm():
+                    your_project.status = 'Planned'
+                    your_project.update()
+                    # change project status
+                    print('Sending canceled')
+                else:
+                    print('Sending canceled')
+            elif your_project.status == 'In progress':
+                your_project.show_report()
+                print('Are you sure to send the request? (Report evaluation)')
+                if confirm():
+                    your_project.status = 'Reported'
+                    your_project.update()
+                    # change project status
+                    print('Sending canceled')
+                else:
+                    print('Sending canceled')
+            elif your_project.status == 'Not started':
+                print('Project has no advisor.')
+            elif your_project.status in ('Planned', 'Reported'):
+                print('The request is already sent.')
+            else:
+                print('Cannot send any more report.')
             # cannot if already waiting for evaluation
         print()
         print('Select your action')
@@ -653,7 +681,10 @@ def faculty():
                 if choice == 1:
                     print('Are you sure? (Accept)')
                     if confirm():
-                        project.set_row(project_id, 'advisor', ID).set_row(project_id, 'status', 'Initiate')
+                        your_project.advisor = ID
+                        your_project.status = 'Initiate'
+                        your_project.update()
+                        # project.set_row(project_id, 'advisor', ID).set_row(project_id, 'status', 'Initiate')
                         # become advisor
                         advisor_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id,
                                                                                                    'response_date',
