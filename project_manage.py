@@ -746,12 +746,14 @@ def faculty():
             print()
             if choice == 1:
                 k = 0
+                available_id = []
                 print('Project')
                 print()
                 for project_id in call_project_id(ID):
                     your_project = Project(project_id)
                     if your_project.status in ('Planned', 'Reported'):
                         k += 1
+                        available_id.append(project_id)
                         print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
                 if k == 0:
                     print('You have no project to evaluate.')
@@ -759,7 +761,7 @@ def faculty():
                     print()
                     while True:
                         project_id = input('Insert ID of the project you want to evaluate: ')
-                        if project_id in call_project_id(ID):
+                        if project_id in available_id:
                             break
                         print('Incorrect ID. Please try again')
                     if your_project.status == 'Planned':
@@ -800,17 +802,41 @@ def faculty():
                             print('Evaluation canceled')
             elif choice == 2:
                 k = 0
+                available_id = []
                 print('Project')
                 print()
                 for _project in project.table:
-                    if project_id not in call_project_id(ID) and _project['status'] == 'Reported':
+                    project_id = _project['ID']
+                    if project_id not in call_project_id(ID) and _project['status'] == 'Advisor-approved':
                         your_project = Project(project_id)
                         k += 1
+                        available_id.append(project_id)
                         print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
                 if k == 0:
                     print('There is no project to evaluate.')
                 else:
-                    pass
+                    print()
+                    while True:
+                        project_id = input('Insert ID of the project you want to evaluate: ')
+                        if project_id in available_id:
+                            break
+                        print('Incorrect ID. Please try again')
+                    your_project.show_report()
+                    print('Please take your time to evaluate...')
+                    print()
+                    print('Evaluation result')
+                    print('1. Pass')
+                    print('2. Cancel')
+                    choice = int(input('Input number(1-2): '))
+                    print()
+                    if choice == 1:
+                        print('PASS')
+                        if confirm():
+                            your_project.status = 'Approved'
+                            your_project.update()
+                            print('Evaluation confirmed')
+                        else:
+                            print('Evaluation canceled')
         elif choice == 4:
             print(project.table)
             print('Approve or not')
