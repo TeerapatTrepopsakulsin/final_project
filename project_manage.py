@@ -722,6 +722,8 @@ def faculty():
                     for project_id in call_project_id(ID):
                         your_project = Project(project_id)
                         your_project.show()
+                        your_project.show_proposal('faculty')
+                        your_project.show_report('faculty')
                         print()
                 elif choice == 2:
                     for _project in project.table:
@@ -765,9 +767,9 @@ def faculty():
                             break
                         print('Incorrect ID. Please try again')
                     if your_project.status == 'Planned':
-                        your_project.show_proposal()
+                        your_project.show_proposal('faculty')
                     elif your_project.status == 'Reported':
-                        your_project.show_report()
+                        your_project.show_report('faculty')
                     print('Please take your time to evaluate...')
                     print()
                     print('Evaluation result')
@@ -805,9 +807,9 @@ def faculty():
                 available_id = []
                 print('Project')
                 print()
-                for _project in project.table:
+                for _project in project.filter(lambda x: x['status'] == 'Advisor-approved').table:
                     project_id = _project['ID']
-                    if project_id not in call_project_id(ID) and _project['status'] == 'Advisor-approved':
+                    if project_id not in call_project_id(ID):
                         your_project = Project(project_id)
                         k += 1
                         available_id.append(project_id)
@@ -821,7 +823,7 @@ def faculty():
                         if project_id in available_id:
                             break
                         print('Incorrect ID. Please try again')
-                    your_project.show_report()
+                    your_project.show_report('faculty')
                     print('Please take your time to evaluate...')
                     print()
                     print('Evaluation result')
@@ -838,8 +840,41 @@ def faculty():
                         else:
                             print('Evaluation canceled')
         elif choice == 4:
-            print(project.table)
-            print('Approve or not')
+            k = 0
+            available_id = []
+            for project_id in call_project_id(ID):
+                your_project = Project(project_id)
+                if your_project.status == 'Approve':
+                    k += 1
+                    available_id.append(project_id)
+                    print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+            if k == 0:
+                print('You have no project to final approve.')
+            else:
+                print()
+                while True:
+                    project_id = input('Insert ID of the project you want to evaluate: ')
+                    if project_id in available_id:
+                        break
+                    print('Incorrect ID. Please try again')
+                your_project.show()
+                your_project.show_proposal('faculty')
+                your_project.show_report('faculty')
+                print()
+                print(f"{your_project.title} Project")
+                print('1. Approve')
+                print('2. Cancel')
+                choice = int(input('Input number(1-2): '))
+                print()
+                if choice == 1:
+                    print('APPROVE')
+                    if confirm():
+                        your_project.status = 'Completed'
+                        your_project.update()
+                        print('Approval confirmed')
+                        print(f'{your_project.title} Project is completed.')
+                    else:
+                        print('Approval canceled')
         print()
         print('Select your action')
         print('1. Requests')
