@@ -627,11 +627,61 @@ def faculty():
     print()
     while choice != 5:
         if choice == 1:
-            print(advisor_pending_request.table)
-            print('Accept or Deny')
+            k = 0
+            for request in advisor_pending_request.table:
+                if isinproject(ID, request) and request['response'] == '' and k == 0:
+                    project_id = copy.deepcopy(request['ID'])
+                    your_project = Project(project_id)
+                    n_request = count_requests(advisor_pending_request, ID)
+                    if n_request >= 2:
+                        print(f"You have {identify(your_project.lead)}'s and {n_request - 1} other requests pending.")
+                    else:
+                        print(f"You have {identify(your_project.lead)}'s request pending.")
+                    print(f'{identify(your_project.lead)} want you to supervise {your_project.title} project.')
+                    your_project.show()
+                    k += 1
+            if k == 0:
+                print('You have no request')
+            else:
+                print()
+                print('Select your action')
+                print('1. Accept')
+                print('2. Deny')
+                print('3. Cancel')
+                choice = int(input('Input number(1-3): '))
+                print()
+                if choice == 1:
+                    print('Are you sure? (Accept)')
+                    if confirm():
+                        project.set_row(project_id, 'advisor', ID).set_row(project_id, 'status', 'Initiate')
+                        # become advisor
+                        advisor_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id,
+                                                                                                   'response_date',
+                                                                                                   strftime("%d/%b/%Y",
+                                                                                                            localtime(
+                                                                                                                time())))
+                        advisor_auto_deny(ID)
+                        # advisor_request update
+                        login_table.set_row(ID, 'role', 'advisor')
+                        # login update
+                        print('Accepting confirmed')
+                    else:
+                        print('Accepting canceled')
+                elif choice == 2:
+                    print('Are you sure? (Deny)')
+                    if confirm():
+                        advisor_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id,
+                                                                                                 'response_date',
+                                                                                                 strftime("%d/%b/%Y",
+                                                                                                          localtime(
+                                                                                                              time())))
+                        # advisor_request update
+                        print('Denying confirmed')
+                    else:
+                        print('Denying canceled')
         elif choice == 2:
             print('Select your project type')
-            print('1. Under advising project')
+            print('1. Under supervising project')
             print('2. Other project')
             print('3. Cancel')
             choice = int(input('Input number(1-3): '))
@@ -641,12 +691,19 @@ def faculty():
                     for project_id in call_project_id(ID):
                         your_project = Project(project_id)
                         your_project.show()
+                        print()
                 elif choice == 2:
                     for _project in project.table:
                         if not isinproject(ID, _project):
                             project_id = copy.deepcopy(_project['ID'])
                             your_project = Project(project_id)
                             your_project.show()
+                            print()
+                print()
+                print('Select your project type')
+                print('1. Under supervising project')
+                print('2. Other project')
+                print('3. Cancel')
                 choice = int(input('Input number(1-3): '))
                 print()
         elif choice == 3:

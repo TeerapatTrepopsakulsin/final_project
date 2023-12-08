@@ -1,6 +1,6 @@
 ID,username,password,role
 7447677,Cristiano.R,2255,admin
-9898118,Lionel.M,2977,student
+9898118,Lionel.M,2977,lead
 5662557,Manuel.N,1244,student
 5687866,Robert.L,8176,student
 3557832,Gareth.B,9462,student
@@ -23,5 +23,5 @@ ID,username,password,role
 8347432,Marco.V,8780,faculty
 4720327,David.A,3861,faculty
 7525643,Henrikh.M,2636,faculty
-2472659,Karim.B,3828,faculty
+2472659,Karim.B,3828,advisor
 0000000,,,lead

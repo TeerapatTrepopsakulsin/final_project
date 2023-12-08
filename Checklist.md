@@ -1,4 +1,4 @@
-### student():
+### student(): ///
     1. Requests ///
     2. Create a project ///
 
@@ -18,7 +18,7 @@
     3. Requests history ///
 
 ### faculty():
-    1. Requests
+    1. Requests ///
     2. See project status ///
     3. Evaluate project
     4. Approve project
