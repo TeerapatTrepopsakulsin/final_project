@@ -7,6 +7,11 @@ import database
 
 
 def initializing():
+    """
+    create an object to read all csv files that will serve as a persistent state for this program,
+    then create all the corresponding tables for those csv files,
+    and add all these tables to the database
+    """
     DB = database.Database()
 
     global persons
@@ -36,6 +41,11 @@ def initializing():
 
 
 def identify(person_id):
+    """
+    convert person ID into their name (First name, Last name)
+    :param person_id:
+    :return: str of the name of the person, None if invalid
+    """
     persons_list = copy.deepcopy(persons.table)
     for person in persons_list:
         if person['ID'] == person_id:
@@ -44,12 +54,23 @@ def identify(person_id):
 
 
 def isinproject(any_id, project):
+    """
+    check if the ID is in the project or not
+    :param any_id: str of ID
+    :param project: dict with project status
+    :return: True if the ID is in the project, False otherwise
+    """
     if any_id in project.values():
         return True
     return False
 
 
 def count_project(any_id):
+    """
+    count the number of projects that the person with specific ID is in
+    :param any_id: str of ID
+    :return: int of the number of projects
+    """
     count = 0
     for _project in project.table:
         if isinproject(any_id, _project):
@@ -58,6 +79,12 @@ def count_project(any_id):
 
 
 def count_requests(self, any_id):
+    """
+    count the number of pending requests of the specific ID in specific table
+    :param self: name of csv file
+    :param any_id: str of ID
+    :return: int of the number of pending requests
+    """
     count = 0
     for request in self.table:
         if isinproject(any_id, request) and request['response'] == '':
@@ -71,7 +98,8 @@ def member_auto_deny(member_id):
     :param member_id: str of member ID
     """
     for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
-        member_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+        (member_pending_request.set_row(request['ID'], 'response', 'Denied')
+         .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
 
 def advisor_auto_deny(advisor_id):
@@ -81,7 +109,8 @@ def advisor_auto_deny(advisor_id):
     """
     if count_project(advisor_id) == 5:
         for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
-            advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
+            (advisor_pending_request.set_row(request['ID'], 'response', 'Denied')
+             .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
 
 def request_auto_invalid(project_id):
@@ -113,6 +142,13 @@ def call_project_id(person_id):
 
 
 def isinrequest(project_id, person_id):
+    """
+    check whether the person with specific ID have the request history
+    with project with specific ID or not
+    :param project_id: str of project ID
+    :param person_id: str of person ID
+    :return: True if have, False otherwise
+    """
     for table in member_pending_request.table, advisor_pending_request.table:
         for request in table:
             if request['ID'] == project_id and isinproject(person_id, request):
@@ -121,15 +157,27 @@ def isinrequest(project_id, person_id):
 
 
 def show_person(role_list, exclude_project_id):
+    """
+    show person ID, name and role which have the same role as in the role list
+    and doesn't be part of specific excluded project ID and available for other project
+    :param role_list: list of roles
+    :param exclude_project_id: str of project ID
+    :return: list of person ID which has showed
+    """
     available_id = []
     for person in login_table.table:
-        if person['role'] in role_list and not isinrequest(exclude_project_id, person['ID']) and len(call_project_id(person['ID'])) < 5:
+        if (person['role'] in role_list and not isinrequest(exclude_project_id, person['ID']) and
+                len(call_project_id(person['ID'])) < 5):
             print(f"{person['ID']:^9} | {identify(person['ID']):<18} | Role: {person['role']}")
             available_id.append(person['ID'])
     return available_id
 
 
 def confirm():
+    """
+    ask to confirm, will return True if confirmed, False otherwise
+    :return: True if confirmed, False otherwise
+    """
     print()
     print('Press only Enter to Confirm')
     choice = input('Press other key to Cancel ')
@@ -140,7 +188,7 @@ def confirm():
 
 def create_project_id():
     """
-    create new project ID which is str of 6 digits
+    create new project ID which is str of 6 digits number and doesn't already exist
     :return: str of project ID
     """
     exist_id = [i['ID'] for i in project.table]
@@ -149,6 +197,10 @@ def create_project_id():
 
 
 def admin_modify(self):
+    """
+    function for admin role, especially modifying each table data
+    :param self: name of csv file
+    """
     for request in self.table:
         print(request)
     project_id = input('Input project ID to modify ')
@@ -163,7 +215,7 @@ def admin_modify(self):
         print('Modifying canceled')
 
 
-########################################################################################################################
+##############################################################################
 class Project:
     def __init__(self, ID):
         self.ID = ID
@@ -197,12 +249,14 @@ class Project:
                         if i['response'] in ('', 'Invalid'):
                             print(f"{identify(i['member'])} hasn't responded to the member request")
                         else:
-                            print(f"{identify(i['member'])} had {i['response']} the member request on {i['response_date']}")
+                            print(f"{identify(i['member'])} had {i['response']} "
+                                  f"the member request on {i['response_date']}")
                     elif k == 1:
                         if i['response'] in ('', 'Invalid'):
                             print(f"{identify(i['advisor'])} hasn't responded to the advisor request")
                         else:
-                            print(f"{identify(i['advisor'])} had {i['response']} the advisor request on {i['response_date']}")
+                            print(f"{identify(i['advisor'])} had {i['response']} "
+                                  f"the advisor request on {i['response_date']}")
             k += 1
 
     def show_proposal(self, member_or_faculty='member'):
@@ -288,8 +342,12 @@ class Project:
                     print('Modifying canceled')
 
 
-########################################################################################################################
+##############################################################################
 def login():
+    """
+    ask a user for a username and password
+    :return: [ID, role] if valid, None otherwise
+    """
     username = input('Enter username: ')
     password = input('Enter password: ')
     for i in login_table.table:
@@ -298,9 +356,11 @@ def login():
     return None
 
 
-# define a function called exit
 def exit():
-    for i in [[persons,'persons.csv'],[login_table, 'login.csv'],[project, 'project.csv'], [advisor_pending_request, 'advisor_pending_request.csv'],[member_pending_request, 'member_pending_request.csv']]:
+    """  write out all the tables that have been modified to the corresponding csv files """
+    for i in [[persons, 'persons.csv'], [login_table, 'login.csv'], [project, 'project.csv'],
+              [advisor_pending_request, 'advisor_pending_request.csv'],
+              [member_pending_request, 'member_pending_request.csv']]:
         my_file = open(i[1], 'w')
         writer = csv.writer(my_file)
         list_of_key = []
@@ -315,6 +375,7 @@ def exit():
 
 
 def student():
+    """ function for student role """
     print('Select your action')
     print('1. Requests')
     print('2. Create a project')
@@ -330,10 +391,12 @@ def student():
                     your_project = Project(project_id)
                     n_request = count_requests(member_pending_request, ID)
                     if n_request >= 2:
-                        print(f"You have {identify(your_project.lead)}'s and {n_request - 1} other requests pending.")
+                        print(f"You have {identify(your_project.lead)}'s and "
+                              f"{n_request - 1} other requests pending.")
                     else:
                         print(f"You have {identify(your_project.lead)}'s request pending.")
-                    print(f'{identify(your_project.lead)} want you to join {your_project.title} project.')
+                    print(f'{identify(your_project.lead)} want you to '
+                          f'join {your_project.title} project.')
                     your_project.show()
                     k += 1
             if k == 0:
@@ -370,7 +433,8 @@ def student():
                 elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
-                        member_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
+                        (member_pending_request.set_row(project_id, 'response', 'Denied')
+                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         # member_request update
                         print('Denying confirmed')
                     else:
@@ -408,6 +472,7 @@ def student():
 
 
 def lead():
+    """ function for lead role """
     print('Select your action')
     print('1. See project status')
     print('2. Modify project information')
@@ -504,7 +569,9 @@ def lead():
                 available_id = []
                 for request in member_pending_request.table:
                     if isinproject(project_id, request) and request['response'] == '':
-                        print(f"{request['member']:^9} | {identify(request['member']):<18} | Waiting...")
+                        print(f"{request['member']:^9} | "
+                              f"{identify(request['member']):<18} | "
+                              f"Waiting...")
                         available_id.append(request['member'])
                 print()
                 while True:
@@ -514,8 +581,11 @@ def lead():
                     print('Incorrect ID. Please try again')
                 print('Are you sure to cancel the request?')
                 if confirm():
-                    member_pending_request.table.remove(
-                        {'ID': project_id, 'member': member_id, 'response': '', 'response_date': ''})
+                    member_pending_request.table.remove({
+                        'ID': project_id,
+                        'member': member_id,
+                        'response': '',
+                        'response_date': ''})
                     print('Cancelling confirmed')
                 else:
                     print('Cancelling canceled')
@@ -530,7 +600,9 @@ def lead():
                 available_id = []
                 for request in advisor_pending_request.table:
                     if isinproject(project_id, request) and request['response'] == '':
-                        print(f"{request['advisor']:^9} | {identify(request['advisor']):<18} | Waiting...")
+                        print(f"{request['advisor']:^9} | "
+                              f"{identify(request['advisor']):<18} | "
+                              f"Waiting...")
                         available_id.append(request['advisor'])
                 print()
                 while True:
@@ -541,7 +613,10 @@ def lead():
                 print('Are you sure to cancel the request?')
                 if confirm():
                     advisor_pending_request.table.remove(
-                        {'ID': project_id, 'advisor': advisor_id, 'response': '', 'response_date': ''})
+                        {'ID': project_id,
+                         'advisor': advisor_id,
+                         'response': '',
+                         'response_date': ''})
                     print('Cancelling confirmed')
                 else:
                     print('Cancelling canceled')
@@ -594,6 +669,7 @@ def lead():
 
 
 def member():
+    """ function for member role """
     print('Select your action')
     print('1. See project status')
     print('2. Modify project information')
@@ -629,6 +705,7 @@ def member():
 
 
 def faculty():
+    """ function for faculty role """
     print('Select your action')
     print('1. Requests')
     print('2. See project status')
@@ -646,10 +723,12 @@ def faculty():
                     your_project = Project(project_id)
                     n_request = count_requests(advisor_pending_request, ID)
                     if n_request >= 2:
-                        print(f"You have {identify(your_project.lead)}'s and {n_request - 1} other requests pending.")
+                        print(f"You have {identify(your_project.lead)}'s and "
+                              f"{n_request - 1} other requests pending.")
                     else:
                         print(f"You have {identify(your_project.lead)}'s request pending.")
-                    print(f'{identify(your_project.lead)} want you to supervise {your_project.title} project.')
+                    print(f'{identify(your_project.lead)} want you to '
+                          f'supervise {your_project.title} project.')
                     your_project.show()
                     k += 1
             if k == 0:
@@ -669,11 +748,8 @@ def faculty():
                         your_project.status = 'Initiate'
                         your_project.update()
                         # become advisor
-                        advisor_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id,
-                                                                                                   'response_date',
-                                                                                                   strftime("%d/%b/%Y",
-                                                                                                            localtime(
-                                                                                                                time())))
+                        (advisor_pending_request.set_row(project_id, 'response', 'Accepted')
+                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         advisor_auto_deny(ID)
                         # advisor_request update
                         login_table.set_row(ID, 'role', 'advisor')
@@ -684,11 +760,8 @@ def faculty():
                 elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
-                        advisor_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id,
-                                                                                                 'response_date',
-                                                                                                 strftime("%d/%b/%Y",
-                                                                                                          localtime(
-                                                                                                              time())))
+                        (advisor_pending_request.set_row(project_id, 'response', 'Denied')
+                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         # advisor_request update
                         print('Denying confirmed')
                     else:
@@ -739,7 +812,9 @@ def faculty():
                     if your_project.status in ('Planned', 'Reported'):
                         k += 1
                         available_id.append(project_id)
-                        print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+                        print(f"{project_id:^8} | "
+                              f"{your_project.title:<30} | "
+                              f"Status: {your_project.status}")
                 if k == 0:
                     print('You have no project to evaluate.')
                 else:
@@ -796,7 +871,9 @@ def faculty():
                         your_project = Project(project_id)
                         k += 1
                         available_id.append(project_id)
-                        print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+                        print(f"{project_id:^8} | "
+                              f"{your_project.title:<30} | "
+                              f"Status: {your_project.status}")
                 if k == 0:
                     print('There is no project to evaluate.')
                 else:
@@ -830,7 +907,9 @@ def faculty():
                 if your_project.status == 'Approve':
                     k += 1
                     available_id.append(project_id)
-                    print(f"{project_id:^8} | {your_project.title:<30} | Status: {your_project.status}")
+                    print(f"{project_id:^8} | "
+                          f"{your_project.title:<30} | "
+                          f"Status: {your_project.status}")
             if k == 0:
                 print('You have no project to final approve.')
             else:
@@ -872,6 +951,7 @@ def faculty():
 
 
 def admin():
+    """ function for admin role """
     print('Select your action')
     print('1. See project data')
     print('2. Modify project data')
