@@ -17,7 +17,7 @@
     2. Modify project information ///
     3. Requests history ///
 
-### faculty():
+### faculty(): ///
     1. Requests ///
     2. See project status ///
     3. Evaluate project ///

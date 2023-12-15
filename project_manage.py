@@ -256,9 +256,9 @@ class Project:
             print('1. Change project title')
             print('2. Modify project proposal')
             print('3. Cancel')
-            choice = int(input('Input number(1-3): '))
+            choice = input('Input number(1-3): ')
             print()
-            if choice == 1:
+            if choice == '1':
                 print(f'Current project title: {self.title}')
                 new_title = input('Insert new title ')
                 print('Do you want to change?')
@@ -268,7 +268,7 @@ class Project:
                     print('Modifying completed')
                 else:
                     print('Modifying canceled')
-            elif choice == 2:
+            elif choice == '2':
                 self.show_proposal()
                 print()
                 new_proposal = input('Insert new proposal ')
@@ -282,9 +282,9 @@ class Project:
         else:
             print('1. Modify project report')
             print('2. Cancel')
-            choice = int(input('Input number(1-2): '))
+            choice = input('Input number(1-2): ')
             print()
-            if choice == 1:
+            if choice == '1':
                 self.show_report()
                 print()
                 new_report = input('Insert new report ')
@@ -298,8 +298,6 @@ class Project:
 
 
 ########################################################################################################################
-# define a function called login
-
 def login():
     username = input('Enter username: ')
     password = input('Enter password: ')
@@ -308,11 +306,6 @@ def login():
             return [i['ID'], i['role']]
     return None
 
-
-# here are things to do in this function:
-   # add code that performs a login task
-        # ask a user for a username and password
-        # returns [ID, role] if valid, otherwise returning None
 
 # define a function called exit
 def exit():
@@ -330,21 +323,15 @@ def exit():
     print('Logged out')
 
 
-# here are things to do in this function:
-   # write out all the tables that have been modified to the corresponding csv files
-   # By now, you know how to read in a csv file and transform it into a list of dictionaries. For this project, you also need to know how to do the reverse, i.e., writing out to a csv file given a list of dictionaries. See the link below for a tutorial on how to do this:
-   
-   # https://www.pythonforbeginners.com/basics/list-of-dictionaries-to-csv-in-python
-
 def student():
     print('Select your action')
     print('1. Requests')
     print('2. Create a project')
     print('3. Exit')
-    choice = int(input('Input number(1-3): '))
+    choice = input('Input number(1-3): ')
     print()
-    while choice != 3:
-        if choice == 1:
+    while choice != '3':
+        if choice == '1':
             k = 0
             for request in member_pending_request.table:
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
@@ -366,9 +353,9 @@ def student():
                 print('1. Accept')
                 print('2. Deny')
                 print('3. Cancel')
-                choice = int(input('Input number(1-3): '))
+                choice = input('Input number(1-3): ')
                 print()
-                if choice == 1:
+                if choice == '1':
                     print('Are you sure? (Accept)')
                     if confirm():
                         if your_project.member1 == '':
@@ -389,7 +376,7 @@ def student():
                         # login update
                     else:
                         print('Accepting canceled')
-                elif choice == 2:
+                elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
                         member_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
@@ -397,7 +384,7 @@ def student():
                         print('Denying confirmed')
                     else:
                         print('Denying canceled')
-        elif choice == 2:
+        elif choice == '2':
             title = str(input('Please insert the project title: '))
             print('Do you want to create a project')
             if confirm():
@@ -418,12 +405,14 @@ def student():
                 sys.exit('Changing you role to Lead. Automatic Logout')
             else:
                 print('Creating canceled')
+        else:
+            print('Incorrect input. Try again')
         print()
         print('Select your action')
         print('1. Requests')
         print('2. Create a project')
         print('3. Exit')
-        choice = int(input('Input number(1-3): '))
+        choice = input('Input number(1-3): ')
         print()
 
 
@@ -438,24 +427,24 @@ def lead():
     print('7. Cancel advisor requests')
     print('8. Request for project evaluation')
     print('9. Exit')
-    choice = int(input('Input number(1-9): '))
+    choice = input('Input number(1-9): ')
     print()
-    while choice != 9:
-        if choice == 1:
+    while choice != '9':
+        if choice == '1':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.show()
                 your_project.show_proposal()
                 your_project.show_report()
-        elif choice == 2:
+        elif choice == '2':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.modify()
-        elif choice == 3:
+        elif choice == '3':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.show_request()
-        elif choice == 4:
+        elif choice == '4':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 if count_requests(member_pending_request, your_project.ID) >= 3:
@@ -485,7 +474,7 @@ def lead():
                     else:
                         print('Sending canceled')
             # can't send if project in_progress or already 2 members or 3 requests
-        elif choice == 5:
+        elif choice == '5':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 if count_requests(advisor_pending_request, your_project.ID) >= 1:
@@ -514,7 +503,7 @@ def lead():
                     else:
                         print('Sending canceled')
             # can't send if 1 advisor or 1 request
-        elif choice == 6:
+        elif choice == '6':
             project_id = call_project_id(ID)[0]
             if count_requests(member_pending_request, project_id) <= 0:
                 print('You have no member pending request')
@@ -540,7 +529,7 @@ def lead():
                 else:
                     print('Cancelling canceled')
         # cancel members requests
-        elif choice == 7:
+        elif choice == '7':
             project_id = call_project_id(ID)[0]
             if count_requests(advisor_pending_request, project_id) <= 0:
                 print('You have no advisor pending request')
@@ -566,7 +555,7 @@ def lead():
                 else:
                     print('Cancelling canceled')
         # Cancel advisor requests
-        elif choice == 8:
+        elif choice == '8':
             project_id = call_project_id(ID)[0]
             your_project = Project(project_id)
             if your_project.status == 'Initiate':
@@ -596,6 +585,8 @@ def lead():
             else:
                 print('Cannot send any more report.')
             # cannot if already waiting for evaluation
+        else:
+            print('Incorrect input. Try again')
         print()
         print('Select your action')
         print('1. See project status')
@@ -607,7 +598,7 @@ def lead():
         print('7. Cancel advisor requests')
         print('8. Request for project evaluation')
         print('9. Exit')
-        choice = int(input('Input number(1-9): '))
+        choice = input('Input number(1-9): ')
         print()
 
 
@@ -617,30 +608,32 @@ def member():
     print('2. Modify project information')
     print('3. Requests history')
     print('4. Exit')
-    choice = int(input('Input number(1-4): '))
+    choice = input('Input number(1-4): ')
     print()
-    while choice != 4:
-        if choice == 1:
+    while choice != '4':
+        if choice == '1':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.show()
                 your_project.show_proposal()
                 your_project.show_report()
-        elif choice == 2:
+        elif choice == '2':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.modify()
-        elif choice == 3:
+        elif choice == '3':
             for project_id in call_project_id(ID):
                 your_project = Project(project_id)
                 your_project.show_request()
+        else:
+            print('Incorrect input. Try again')
         print()
         print('Select your action')
         print('1. See project status')
         print('2. Modify project information')
         print('3. Requests history')
         print('4. Exit')
-        choice = int(input('Input number(1-4): '))
+        choice = input('Input number(1-4): ')
         print()
 
 
@@ -651,10 +644,10 @@ def faculty():
     print('3. Evaluate project')
     print('4. Approve project')
     print('5. Exit')
-    choice = int(input('Input number(1-5): '))
+    choice = input('Input number(1-5): ')
     print()
-    while choice != 5:
-        if choice == 1:
+    while choice != '5':
+        if choice == '1':
             k = 0
             for request in advisor_pending_request.table:
                 if isinproject(ID, request) and request['response'] == '' and k == 0:
@@ -676,15 +669,14 @@ def faculty():
                 print('1. Accept')
                 print('2. Deny')
                 print('3. Cancel')
-                choice = int(input('Input number(1-3): '))
+                choice = input('Input number(1-3): ')
                 print()
-                if choice == 1:
+                if choice == '1':
                     print('Are you sure? (Accept)')
                     if confirm():
                         your_project.advisor = ID
                         your_project.status = 'Initiate'
                         your_project.update()
-                        # project.set_row(project_id, 'advisor', ID).set_row(project_id, 'status', 'Initiate')
                         # become advisor
                         advisor_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id,
                                                                                                    'response_date',
@@ -698,7 +690,7 @@ def faculty():
                         print('Accepting confirmed')
                     else:
                         print('Accepting canceled')
-                elif choice == 2:
+                elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
                         advisor_pending_request.set_row(project_id, 'response', 'Denied').set_row(project_id,
@@ -710,22 +702,22 @@ def faculty():
                         print('Denying confirmed')
                     else:
                         print('Denying canceled')
-        elif choice == 2:
+        elif choice == '2':
             print('Select your project type')
             print('1. Under supervising project')
             print('2. Other project')
             print('3. Cancel')
-            choice = int(input('Input number(1-3): '))
+            choice = input('Input number(1-3): ')
             print()
-            while choice != 3:
-                if choice == 1:
+            while choice != '3':
+                if choice == '1':
                     for project_id in call_project_id(ID):
                         your_project = Project(project_id)
                         your_project.show()
                         your_project.show_proposal('faculty')
                         your_project.show_report('faculty')
                         print()
-                elif choice == 2:
+                elif choice == '2':
                     for _project in project.table:
                         if not isinproject(ID, _project):
                             project_id = copy.deepcopy(_project['ID'])
@@ -737,16 +729,16 @@ def faculty():
                 print('1. Under supervising project')
                 print('2. Other project')
                 print('3. Cancel')
-                choice = int(input('Input number(1-3): '))
+                choice = input('Input number(1-3): ')
                 print()
-        elif choice == 3:
+        elif choice == '3':
             print('Select your project type to evaluate')
             print('1. Under supervising project')
             print('2. Other project')
             print('3. Cancel')
-            choice = int(input('Input number(1-3): '))
+            choice = input('Input number(1-3): ')
             print()
-            if choice == 1:
+            if choice == '1':
                 k = 0
                 available_id = []
                 print('Project')
@@ -776,9 +768,9 @@ def faculty():
                     print('1. Pass')
                     print('2. Not pass')
                     print('3. Cancel')
-                    choice = int(input('Input number(1-3): '))
+                    choice = input('Input number(1-3): ')
                     print()
-                    if choice == 1:
+                    if choice == '1':
                         print('PASS')
                         if confirm():
                             if your_project.status == 'Planned':
@@ -791,7 +783,7 @@ def faculty():
                             print('Evaluation confirmed')
                         else:
                             print('Evaluation canceled')
-                    elif choice == 2:
+                    elif choice == '2':
                         print('NOT PASS')
                         if confirm():
                             if your_project.status == 'Planned':
@@ -802,7 +794,7 @@ def faculty():
                             print('Evaluation confirmed')
                         else:
                             print('Evaluation canceled')
-            elif choice == 2:
+            elif choice == '2':
                 k = 0
                 available_id = []
                 print('Project')
@@ -829,9 +821,9 @@ def faculty():
                     print('Evaluation result')
                     print('1. Pass')
                     print('2. Cancel')
-                    choice = int(input('Input number(1-2): '))
+                    choice = input('Input number(1-2): ')
                     print()
-                    if choice == 1:
+                    if choice == '1':
                         print('PASS')
                         if confirm():
                             your_project.status = 'Approved'
@@ -839,7 +831,7 @@ def faculty():
                             print('Evaluation confirmed')
                         else:
                             print('Evaluation canceled')
-        elif choice == 4:
+        elif choice == '4':
             k = 0
             available_id = []
             for project_id in call_project_id(ID):
@@ -864,9 +856,9 @@ def faculty():
                 print(f"{your_project.title} Project")
                 print('1. Approve')
                 print('2. Cancel')
-                choice = int(input('Input number(1-2): '))
+                choice = input('Input number(1-2): ')
                 print()
-                if choice == 1:
+                if choice == '1':
                     print('APPROVE')
                     if confirm():
                         your_project.status = 'Completed'
@@ -875,6 +867,8 @@ def faculty():
                         print(f'{your_project.title} Project is completed.')
                     else:
                         print('Approval canceled')
+        else:
+            print('Incorrect input. Try again')
         print()
         print('Select your action')
         print('1. Requests')
@@ -882,7 +876,7 @@ def faculty():
         print('3. Evaluate project')
         print('4. Approve project')
         print('5. Exit')
-        choice = int(input('Input number(1-5): '))
+        choice = input('Input number(1-5): ')
         print()
 
 
@@ -895,27 +889,29 @@ def admin():
     print('5. See pending advisor requests data')
     print('6. Modify pending advisor requests data')
     print('7. Exit')
-    choice = int(input('Input number(1-7): '))
+    choice = input('Input number(1-7): ')
     print()
-    while choice != 7:
-        if choice == 1:
+    while choice != '7':
+        if choice == '1':
             for _project in project.table:
                 print(_project)
-        elif choice == 2:
+        elif choice == '2':
             table = copy.deepcopy(project)
             admin_modify(table)
-        elif choice == 3:
+        elif choice == '3':
             for request in member_pending_request.table:
                 print(request)
-        elif choice == 4:
+        elif choice == '4':
             table = copy.deepcopy(member_pending_request)
             admin_modify(table)
-        elif choice == 5:
+        elif choice == '5':
             for request in advisor_pending_request.table:
                 print(request)
-        elif choice == 6:
+        elif choice == '6':
             table = copy.deepcopy(advisor_pending_request)
             admin_modify(table)
+        else:
+            print('Incorrect input. Try again')
         print()
         print('Select your action')
         print('1. See project data')
@@ -925,7 +921,7 @@ def admin():
         print('5. See pending advisor requests data')
         print('6. Modify pending advisor requests data')
         print('7. Exit')
-        choice = int(input('Input number(1-7): '))
+        choice = input('Input number(1-7): ')
         print()
 
 
@@ -938,7 +934,7 @@ while val is None:
     print()
     val = login()
 
-# based on the return value for login, activate the code that performs activities according to the role defined for that person_id
+
 ID = copy.deepcopy(val[0])
 role = copy.deepcopy(val[1])
 
