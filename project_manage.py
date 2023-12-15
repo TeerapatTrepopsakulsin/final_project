@@ -5,8 +5,6 @@ from random import sample
 from time import time, strftime, localtime
 import database
 
-# define a function called initializing
-
 
 def initializing():
     DB = database.Database()
@@ -37,30 +35,12 @@ def initializing():
     DB.insert(member_pending_request)
 
 
-
-# here are things to do in this function:
-
-    # create an object to read all csv files that will serve as a persistent state for this program
-
-    # create all the corresponding tables for those csv files
-
-    # see the guide how many tables are needed
-
-    # add all these tables to the database
-
-
 def identify(person_id):
     persons_list = copy.deepcopy(persons.table)
     for person in persons_list:
         if person['ID'] == person_id:
             return f"{person['first']} {person['last']}"
     return None
-
-
-def int_autocorrect(num, a):
-    if isinstance(num, int):
-        return num
-    return a
 
 
 def isinproject(any_id, project):
@@ -83,24 +63,32 @@ def count_requests(self, any_id):
         if isinproject(any_id, request) and request['response'] == '':
             count += 1
     return count
-# return self.filter(lambda x: x['member'] == id and x['response'] == '').aggregate(lambda x: len(x), 'ID')
 
 
 def member_auto_deny(member_id):
-    """deny all request when become member of the project"""
+    """
+    deny all request when become member of the project
+    :param member_id: str of member ID
+    """
     for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
         member_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
 
 def advisor_auto_deny(advisor_id):
-    """deny all request when become advisor of 5 projects"""
+    """
+    deny all request when become advisor of 5 projects
+    :param advisor_id: str of advisor ID
+    """
     if count_project(advisor_id) == 5:
         for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
             advisor_pending_request.set_row(request['ID'], 'response', 'Denied').set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time())))
 
 
 def request_auto_invalid(project_id):
-    """request become invalid if and only if project is in progress or project member is full"""
+    """
+    request become invalid if and only if project is in progress or project member is full
+    :param project_id: str of project ID
+    """
     your_project = Project(project_id)
     if your_project.status not in ('Not started', 'Initiate', 'Planned') or your_project.member2 not in (None, ''):
         for request in member_pending_request.filter(lambda x: x['response'] == '' and x['ID'] == your_project.ID).table:
@@ -151,6 +139,10 @@ def confirm():
 
 
 def create_project_id():
+    """
+    create new project ID which is str of 6 digits
+    :return: str of project ID
+    """
     exist_id = [i['ID'] for i in project.table]
     selected_id = sample([str(i) for i in range(100000, 999999) if str(i) not in exist_id], 1)
     return selected_id
@@ -183,7 +175,6 @@ class Project:
         self.status = project.get_row(ID, 'status')
         self.proposal = project.get_row(ID, 'proposal')
         self.report = project.get_row(ID, 'report')
-        #self.__dict__ = {'ID':self.ID,'title':self.title,'lead':self.lead,'member1':self.member1,'member2':self.member2,'advisor':self.advisor,'status':self.status}
 
     def update(self):
         project.update(self.ID, self.__dict__)
@@ -925,8 +916,6 @@ def admin():
         print()
 
 
-# make calls to the initializing and login functions defined above
-
 initializing()
 val = login()
 while val is None:
@@ -949,21 +938,5 @@ elif role == 'lead':
 elif role in ('faculty', 'advisor'):
     faculty()
 
-# once everything is done, make a call to the exit function
-# project1 = {'ID':'1234567','title':'colourblind','lead':'1235567','member1':'1234568','member2':None,'advisor':'1234888','status':'nothing'}
-# pending_member1 = {'ID':'1234567','member':'2235567','response':False,'response_date':None}
-# project.table.append(project1)
-# member_pending_request.table.append(pending_member1)
-# print(Project('1234567').show())
-# print(count_requests(member_pending_request.table, '0000000'))
-# a = print(a)
-# print(Project('1234567').__dict__)
-# for i in project.table:
-#     if i['ID'] == '2023341':
-#         i.update({'ID': '2023341', 'title': 'colourblind', 'lead': '1235567', 'member1': '1234568', 'member2': '0000000', 'advisor': '1234888', 'status': 'nothing'})
-# login_table.set_row('0000000','password','5').set_row('0000000','username','4').set_row('1234567', 'response', 'Denied').
-# member_pending_request.set_row('1234567', 'response_date',strftime("%d/%b/%Y", localtime(time())))
-# a = persons.select(['ID'])
-# print(a)
-exit()
 
+exit()
