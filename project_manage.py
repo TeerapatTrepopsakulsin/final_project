@@ -97,7 +97,8 @@ def member_auto_deny(member_id):
     deny all request when become member of the project
     :param member_id: str of member ID
     """
-    for request in member_pending_request.filter(lambda x: x['response'] == '' and x['member'] == member_id).table:
+    condition = lambda x: x['response'] == '' and x['member'] == member_id
+    for request in member_pending_request.filter(condition).table:
         (member_pending_request.set_row(request['ID'], 'response', 'Denied')
          .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
@@ -108,7 +109,8 @@ def advisor_auto_deny(advisor_id):
     :param advisor_id: str of advisor ID
     """
     if count_project(advisor_id) == 5:
-        for request in advisor_pending_request.filter(lambda x: x['response'] == '' and x['advisor'] == advisor_id).table:
+        condition = lambda x: x['response'] == '' and x['advisor'] == advisor_id
+        for request in advisor_pending_request.filter(condition).table:
             (advisor_pending_request.set_row(request['ID'], 'response', 'Denied')
              .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
@@ -119,11 +121,13 @@ def request_auto_invalid(project_id):
     :param project_id: str of project ID
     """
     your_project = Project(project_id)
-    if your_project.status not in ('Not started', 'Initiate', 'Planned') or your_project.member2 not in (None, ''):
-        for request in member_pending_request.filter(lambda x: x['response'] == '' and x['ID'] == your_project.ID).table:
-            member_pending_request.set_row(your_project.ID, 'response', 'Invalid').set_row(request['ID'], 'response_date',
-                                                                                        strftime("%d/%b/%Y",
-                                                                                                 localtime(time())))
+    if (your_project.status not in ('Not started', 'Initiate', 'Planned') or
+            your_project.member2 not in (None, '')):
+        condition = lambda x: x['response'] == '' and x['ID'] == your_project.ID
+        for request in member_pending_request.filter(condition).table:
+            (member_pending_request.set_row(your_project.ID, 'response', 'Invalid')
+             .set_row(request['ID'], 'response_date',
+                      strftime("%d/%b/%Y",  localtime(time()))))
 
 
 def call_project_id(person_id):
@@ -217,7 +221,14 @@ def admin_modify(self):
 
 ##############################################################################
 class Project:
+    """
+    A class to represent a project
+    """
     def __init__(self, ID):
+        """
+        class Project init
+        :param ID: str of project ID
+        """
         self.ID = ID
         self.title = project.get_row(ID, 'title')
         self.lead = project.get_row(ID, 'lead')
@@ -229,9 +240,11 @@ class Project:
         self.report = project.get_row(ID, 'report')
 
     def update(self):
+        """ update all project information to the project table """
         project.update(self.ID, self.__dict__)
 
     def show(self):
+        """ show project information (basically __str__) """
         print(f'Project title: {self.title}\n'
                 f'Lead: {identify(self.lead)}\n'
                 f'Member: {identify(self.member1)}\n'
@@ -240,6 +253,11 @@ class Project:
                 f'Project status: {self.status}')
 
     def show_request(self):
+        """
+        show all requests which have done by lead
+        will show differently depends on request status
+        used by lead and member role
+        """
         print('--Request history--')
         k = 0
         for table in [member_pending_request.table, advisor_pending_request.table]:
@@ -253,13 +271,19 @@ class Project:
                                   f"the member request on {i['response_date']}")
                     elif k == 1:
                         if i['response'] in ('', 'Invalid'):
-                            print(f"{identify(i['advisor'])} hasn't responded to the advisor request")
+                            print(f"{identify(i['advisor'])} "
+                                  f"hasn't responded to the advisor request")
                         else:
                             print(f"{identify(i['advisor'])} had {i['response']} "
                                   f"the advisor request on {i['response_date']}")
             k += 1
 
     def show_proposal(self, member_or_faculty='member'):
+        """
+        show project proposal, which depends on user role and current project status
+        used by lead, member and advisor role
+        :param member_or_faculty: "member" or "faculty"
+        """
         if member_or_faculty == 'member':
             print('---Proposal---')
             print(self.proposal)
@@ -276,6 +300,11 @@ class Project:
                 print('This project proposal is approved.')
 
     def show_report(self, member_or_faculty='member'):
+        """
+        show project report, which depends on user role and current project status
+        used by lead, member and advisor role
+        :param member_or_faculty: "member" or "faculty"
+        """
         if member_or_faculty == 'member':
             print('---Report---')
             print(self.report)
@@ -296,6 +325,11 @@ class Project:
                 print('This project report is approved.')
 
     def modify(self):
+        """
+        ask to modify project information (Title, Proposal, Report)
+        which depends on current project status
+        used by lead and member role
+        """
         if self.status in ('Not started', 'Initiate', 'Planned'):
             print('Select your action')
             print('1. Change project title')
@@ -400,7 +434,7 @@ def student():
                     your_project.show()
                     k += 1
             if k == 0:
-                print('You have no request')
+                print('You have no request.')
             else:
                 print()
                 print('Select your action')
@@ -414,13 +448,13 @@ def student():
                     if confirm():
                         if your_project.member1 == '':
                             your_project.member1 = ID
-                            # project.set_row(project_id, 'member1', ID)
                         elif your_project.member2 == '':
                             your_project.member2 = ID
-                            # project.set_row(project_id, 'member2', ID)
                         your_project.update()
                         # become member
-                        member_pending_request.set_row(project_id, 'response', 'Accepted').set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time())))
+                        (member_pending_request.set_row(project_id, 'response', 'Accepted')
+                         .set_row(project_id, 'response_date',
+                                  strftime("%d/%b/%Y", localtime(time()))))
                         member_auto_deny(ID)
                         request_auto_invalid(project_id)
                         # member_request update
@@ -434,7 +468,8 @@ def student():
                     print('Are you sure? (Deny)')
                     if confirm():
                         (member_pending_request.set_row(project_id, 'response', 'Denied')
-                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
+                         .set_row(project_id, 'response_date',
+                                  strftime("%d/%b/%Y", localtime(time()))))
                         # member_request update
                         print('Denying confirmed')
                     else:
@@ -519,7 +554,7 @@ def lead():
                         if member_id in available_id:
                             break
                         print('Incorrect ID. Please try again')
-                    print('Are you sure to send a request?')
+                    print(f'Are you sure to send a request to {identify(member_id)}?')
                     if confirm():
                         new_request = {'ID': project_id,
                                        'member': member_id,
@@ -548,7 +583,7 @@ def lead():
                         if advisor_id in available_id:
                             break
                         print('Incorrect ID. Please try again')
-                    print('Are you sure to send a request?')
+                    print(f'Are you sure to send a request to {identify(advisor_id)}?')
                     if confirm():
                         new_request = {'ID': project_id,
                                        'advisor': advisor_id,
@@ -749,7 +784,8 @@ def faculty():
                         your_project.update()
                         # become advisor
                         (advisor_pending_request.set_row(project_id, 'response', 'Accepted')
-                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
+                         .set_row(project_id, 'response_date',
+                                  strftime("%d/%b/%Y", localtime(time()))))
                         advisor_auto_deny(ID)
                         # advisor_request update
                         login_table.set_row(ID, 'role', 'advisor')
@@ -761,7 +797,8 @@ def faculty():
                     print('Are you sure? (Deny)')
                     if confirm():
                         (advisor_pending_request.set_row(project_id, 'response', 'Denied')
-                         .set_row(project_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
+                         .set_row(project_id, 'response_date',
+                                  strftime("%d/%b/%Y", localtime(time()))))
                         # advisor_request update
                         print('Denying confirmed')
                     else:
