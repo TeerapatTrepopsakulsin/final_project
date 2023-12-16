@@ -120,6 +120,14 @@ class Table:
         set_table.table = copy.copy(self.table)
         return set_table
 
+    def set_row_advanced(self, id_value, extra_attribute, extra_value, update_attribute, update_value):
+        for item in self.table:
+            if item['ID'] == id_value and item[extra_attribute] == extra_value:
+                item[update_attribute] = update_value
+        set_table = Table(self.table_name + '_set')
+        set_table.table = copy.copy(self.table)
+        return set_table
+
     def get_row(self, id_value, attribute):
         for item in self.table:
             if item['ID'] == id_value:

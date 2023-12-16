@@ -12,32 +12,32 @@ def initializing():
     then create all the corresponding tables for those csv files,
     and add all these tables to the database
     """
-    DB = database.Database()
+    db = database.Database()
 
     global persons
     persons = database.Table('persons')
     persons.insert('persons.csv')
-    DB.insert(persons)
+    db.insert(persons)
 
     global login_table
     login_table = database.Table('login')
     login_table.insert('login.csv')
-    DB.insert(login_table)
+    db.insert(login_table)
 
     global project
     project = database.Table('project')
     project.insert('project.csv')
-    DB.insert(project)
+    db.insert(project)
 
     global advisor_pending_request
     advisor_pending_request = database.Table('advisor_pending_request')
     advisor_pending_request.insert('advisor_pending_request.csv')
-    DB.insert(advisor_pending_request)
+    db.insert(advisor_pending_request)
 
     global member_pending_request
     member_pending_request = database.Table('member_pending_request')
     member_pending_request.insert('member_pending_request.csv')
-    DB.insert(member_pending_request)
+    db.insert(member_pending_request)
 
 
 def identify(person_id):
@@ -97,10 +97,10 @@ def member_auto_deny(member_id):
     deny all request when become member of the project
     :param member_id: str of member ID
     """
-    condition = lambda x: x['response'] == '' and x['member'] == member_id
+    def condition(x): return x['response'] == ''
     for request in member_pending_request.filter(condition).table:
-        (member_pending_request.set_row(request['ID'], 'response', 'Denied')
-         .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
+        (member_pending_request.set_row_advanced(request['ID'], 'member', member_id, 'response', 'Denied')
+         .set_row_advanced(request['ID'], 'member', member_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
 
 def advisor_auto_deny(advisor_id):
@@ -109,10 +109,10 @@ def advisor_auto_deny(advisor_id):
     :param advisor_id: str of advisor ID
     """
     if count_project(advisor_id) == 5:
-        condition = lambda x: x['response'] == '' and x['advisor'] == advisor_id
+        condition = lambda x: x['response'] == ''
         for request in advisor_pending_request.filter(condition).table:
-            (advisor_pending_request.set_row(request['ID'], 'response', 'Denied')
-             .set_row(request['ID'], 'response_date', strftime("%d/%b/%Y", localtime(time()))))
+            (advisor_pending_request.set_row_advanced(request['ID'], 'advisor', advisor_id, 'response', 'Denied')
+             .set_row_advanced(request['ID'], 'advisor', advisor_id, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
 
 
 def request_auto_invalid(project_id):
@@ -124,9 +124,9 @@ def request_auto_invalid(project_id):
     if (your_project.status not in ('Not started', 'Initiate', 'Planned') or
             your_project.member2 not in (None, '')):
         condition = lambda x: x['response'] == '' and x['ID'] == your_project.ID
-        for request in member_pending_request.filter(condition).table:
-            (member_pending_request.set_row(your_project.ID, 'response', 'Invalid')
-             .set_row(request['ID'], 'response_date',
+        for _ in member_pending_request.filter(condition).table:
+            (member_pending_request.set_row_advanced(your_project.ID, 'response', '', 'response', 'Invalid')
+             .set_row_advanced(your_project.ID, 'response', '', 'response_date',
                       strftime("%d/%b/%Y",  localtime(time()))))
 
 
@@ -288,7 +288,7 @@ class Project:
             print('---Proposal---')
             print(self.proposal)
         else:
-            if self.status in ['Not started', 'Initiate']:
+            if self.status in ('Not started', 'Initiate'):
                 print("Lead of this project hasn't submit any proposal.")
             elif self.status == 'Planned':
                 print('---Proposal---')
@@ -452,10 +452,9 @@ def student():
                             your_project.member2 = ID
                         your_project.update()
                         # become member
-                        (member_pending_request.set_row(project_id, 'response', 'Accepted')
-                         .set_row(project_id, 'response_date',
-                                  strftime("%d/%b/%Y", localtime(time()))))
                         member_auto_deny(ID)
+                        (member_pending_request.set_row_advanced(project_id, 'member', ID, 'response', 'Accepted')
+                         .set_row_advanced(project_id, 'member', ID, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         request_auto_invalid(project_id)
                         # member_request update
                         login_table.set_row(ID, 'role', 'member')
@@ -467,9 +466,8 @@ def student():
                 elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
-                        (member_pending_request.set_row(project_id, 'response', 'Denied')
-                         .set_row(project_id, 'response_date',
-                                  strftime("%d/%b/%Y", localtime(time()))))
+                        (member_pending_request.set_row_advanced(project_id, 'member', ID, 'response', 'Denied')
+                         .set_row_advanced(project_id, 'member', ID, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         # member_request update
                         print('Denying confirmed')
                     else:
@@ -783,9 +781,8 @@ def faculty():
                         your_project.status = 'Initiate'
                         your_project.update()
                         # become advisor
-                        (advisor_pending_request.set_row(project_id, 'response', 'Accepted')
-                         .set_row(project_id, 'response_date',
-                                  strftime("%d/%b/%Y", localtime(time()))))
+                        (advisor_pending_request.set_row_advanced(project_id, 'advisor', ID, 'response', 'Accepted')
+                         .set_row_advanced(project_id, 'advisor', ID, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         advisor_auto_deny(ID)
                         # advisor_request update
                         login_table.set_row(ID, 'role', 'advisor')
@@ -796,9 +793,8 @@ def faculty():
                 elif choice == '2':
                     print('Are you sure? (Deny)')
                     if confirm():
-                        (advisor_pending_request.set_row(project_id, 'response', 'Denied')
-                         .set_row(project_id, 'response_date',
-                                  strftime("%d/%b/%Y", localtime(time()))))
+                        (advisor_pending_request.set_row_advanced(project_id, 'advisor', ID, 'response', 'Denied')
+                         .set_row_advanced(project_id, 'advisor', ID, 'response_date', strftime("%d/%b/%Y", localtime(time()))))
                         # advisor_request update
                         print('Denying confirmed')
                     else:
@@ -1044,6 +1040,8 @@ while val is None:
 ID = copy.deepcopy(val[0])
 role = copy.deepcopy(val[1])
 
+print()
+print(f'Welcome {identify(ID)}!')
 if role == 'admin':
     admin()
 elif role == 'student':
