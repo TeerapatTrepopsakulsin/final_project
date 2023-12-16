@@ -53,14 +53,14 @@ def identify(person_id):
     return None
 
 
-def isinproject(any_id, project):
+def isinproject(any_id, _project):
     """
     check if the ID is in the project or not
     :param any_id: str of ID
-    :param project: dict with project status
+    :param _project: dict with project status
     :return: True if the ID is in the project, False otherwise
     """
-    if any_id in project.values():
+    if any_id in _project.values():
         return True
     return False
 
@@ -97,7 +97,8 @@ def member_auto_deny(member_id):
     deny all request when become member of the project
     :param member_id: str of member ID
     """
-    def condition(x): return x['response'] == ''
+    def condition(x):
+        return x['response'] == ''
     for request in member_pending_request.filter(condition).table:
         (member_pending_request.set_row_advanced(request['ID'], 'member', member_id,
                                                  'response', 'Denied')
@@ -111,7 +112,8 @@ def advisor_auto_deny(advisor_id):
     :param advisor_id: str of advisor ID
     """
     if count_project(advisor_id) == 5:
-        def condition(x): return x['response'] == ''
+        def condition(x):
+            return x['response'] == ''
         for request in advisor_pending_request.filter(condition).table:
             (advisor_pending_request.set_row_advanced(request['ID'], 'advisor', advisor_id,
                                                       'response', 'Denied')
@@ -127,7 +129,8 @@ def request_auto_invalid(project_id):
     your_project = Project(project_id)
     if (your_project.status not in ('Not started', 'Initiate', 'Planned') or
             your_project.member2 not in (None, '')):
-        def condition(x): return x['ID'] == your_project.ID
+        def condition(x):
+            return x['ID'] == your_project.ID
         for _ in member_pending_request.filter(condition).table:
             (member_pending_request.set_row_advanced(your_project.ID, 'response', '',
                                                      'response', 'Invalid')
