@@ -208,25 +208,6 @@ def create_project_id():
     return selected_id
 
 
-def admin_modify(self):
-    """
-    function for admin role, especially modifying each table data
-    :param self: name of csv file
-    """
-    for request in self.table:
-        print(request)
-    project_id = input('Input project ID to modify ')
-    attribute = input('Input attribute that you want to modify ')
-    print(f'{project_id} {attribute} is currently {self.get_row(project_id, attribute)}.')
-    new_value = input('Insert new value ')
-    print('Do you want to modify?')
-    if confirm():
-        self.set_row(project_id, attribute, new_value)
-        print('Modifying completed')
-    else:
-        print('Modifying canceled')
-
-
 ##############################################################################
 class Project:
     """
@@ -382,6 +363,154 @@ class Project:
                     print('Modifying completed')
                 else:
                     print('Modifying canceled')
+
+    def send_member_request(self):
+        if count_requests(member_pending_request, self.ID) >= 3:
+            print('Pending requests reach limit.')
+        elif self.status not in ('Not started', 'Initiate', 'Planned'):
+            print('Your project already in progress.')
+        elif self.member2 not in (None, ''):
+            print('Members reach limit.')
+        else:
+            print('Available students')
+            print()
+            available_id = show_person(['student'], self.ID)
+            print()
+            while True:
+                member_id = input('Insert ID of the person you want: ')
+                if member_id in available_id:
+                    break
+                print('Incorrect ID. Please try again')
+            print(f'Are you sure to send a request to {identify(member_id)}?')
+            if confirm():
+                new_request = {'ID': self.ID,
+                               'member': member_id,
+                               'response': '',
+                               'response_date': ''}
+                member_pending_request.table.append(new_request)
+                print('Sending confirmed')
+            else:
+                print('Sending canceled')
+    # can't send if project in_progress or already 2 members or 3 requests
+
+    def send_advisor_request(self):
+        if count_requests(advisor_pending_request, self.ID) >= 1:
+            print('Pending requests reach limit.')
+        elif self.advisor not in (None, ''):
+            print('Advisor reach limit.')
+        else:
+            print('Available faculties')
+            print()
+            available_id = show_person(['faculty', 'advisor'], self.ID)
+            # not over 5
+            print()
+            while True:
+                advisor_id = input('Insert ID of the faculty you want to be supervised: ')
+                if advisor_id in available_id:
+                    break
+                print('Incorrect ID. Please try again')
+            print(f'Are you sure to send a request to {identify(advisor_id)}?')
+            if confirm():
+                new_request = {'ID': self.ID,
+                               'advisor': advisor_id,
+                               'response': '',
+                               'response_date': ''}
+                advisor_pending_request.table.append(new_request)
+                print('Sending confirmed')
+            else:
+                print('Sending canceled')
+    # can't send if 1 advisor or 1 request
+
+    def cancel_member_request(self):
+        if count_requests(member_pending_request, self.ID) <= 0:
+            print('You have no member pending request')
+        else:
+            print('Pending member request')
+            print()
+            available_id = []
+            for request in member_pending_request.table:
+                if isinproject(self.ID, request) and request['response'] == '':
+                    print(f"{request['member']:^9} | "
+                          f"{identify(request['member']):<18} | "
+                          f"Waiting...")
+                    available_id.append(request['member'])
+            print()
+            while True:
+                member_id = input('Insert ID of the person you want to cancel: ')
+                if member_id in available_id:
+                    break
+                print('Incorrect ID. Please try again')
+            print('Are you sure to cancel the request?')
+            if confirm():
+                member_pending_request.table.remove({
+                    'ID': self.ID,
+                    'member': member_id,
+                    'response': '',
+                    'response_date': ''})
+                print('Cancelling confirmed')
+            else:
+                print('Cancelling canceled')
+    # cancel members requests
+
+    def cancel_advisor_request(self):
+        if count_requests(advisor_pending_request, self.ID) <= 0:
+            print('You have no advisor pending request')
+        else:
+            print('Pending advisor request')
+            print()
+            available_id = []
+            for request in advisor_pending_request.table:
+                if isinproject(self.ID, request) and request['response'] == '':
+                    print(f"{request['advisor']:^9} | "
+                          f"{identify(request['advisor']):<18} | "
+                          f"Waiting...")
+                    available_id.append(request['advisor'])
+            print()
+            while True:
+                advisor_id = input('Insert ID of the faculty you want to cancel: ')
+                if advisor_id in available_id:
+                    break
+                print('Incorrect ID. Please try again')
+            print('Are you sure to cancel the request?')
+            if confirm():
+                advisor_pending_request.table.remove(
+                    {'ID': self.ID,
+                     'advisor': advisor_id,
+                     'response': '',
+                     'response_date': ''})
+                print('Cancelling confirmed')
+            else:
+                print('Cancelling canceled')
+    # Cancel advisor requests
+
+    def evaluation_request(self):
+        if self.status == 'Initiate':
+            self.show_proposal()
+            print('Are you sure to send the request? (Proposal evaluation)')
+            if confirm():
+                self.status = 'Planned'
+                self.update()
+                # change project status
+                print('Sending canceled')
+            else:
+                print('Sending canceled')
+        elif self.status == 'In progress':
+            self.show_report()
+            print('Are you sure to send the request? (Report evaluation)')
+            if confirm():
+                self.status = 'Reported'
+                self.update()
+                # change project status
+                print('Sending canceled')
+            else:
+                print('Sending canceled')
+        elif self.status == 'Not started':
+            print('Project has no advisor.')
+        elif self.status in ('Planned', 'Reported'):
+            print('The request is already sent.')
+        else:
+            print('Cannot send any more report.')
+        # cannot if already waiting for evaluation
 
 
 ##############################################################################
@@ -547,154 +676,23 @@ def lead(lead_id):
         elif choice == '4':
             for project_id in call_project_id(lead_id):
                 your_project = Project(project_id)
-                if count_requests(member_pending_request, your_project.ID) >= 3:
-                    print('Pending requests reach limit.')
-                elif your_project.status not in ('Not started', 'Initiate', 'Planned'):
-                    print('Your project already in progress.')
-                elif your_project.member2 not in (None, ''):
-                    print('Members reach limit.')
-                else:
-                    print('Available students')
-                    print()
-                    available_id = show_person(['student'], project_id)
-                    print()
-                    while True:
-                        member_id = input('Insert ID of the person you want: ')
-                        if member_id in available_id:
-                            break
-                        print('Incorrect ID. Please try again')
-                    print(f'Are you sure to send a request to {identify(member_id)}?')
-                    if confirm():
-                        new_request = {'ID': project_id,
-                                       'member': member_id,
-                                       'response': '',
-                                       'response_date': ''}
-                        member_pending_request.table.append(new_request)
-                        print('Sending confirmed')
-                    else:
-                        print('Sending canceled')
-            # can't send if project in_progress or already 2 members or 3 requests
+                your_project.send_member_request()
         elif choice == '5':
             for project_id in call_project_id(lead_id):
                 your_project = Project(project_id)
-                if count_requests(advisor_pending_request, your_project.ID) >= 1:
-                    print('Pending requests reach limit.')
-                elif your_project.advisor not in (None, ''):
-                    print('Advisor reach limit.')
-                else:
-                    print('Available faculties')
-                    print()
-                    available_id = show_person(['faculty', 'advisor'], project_id)
-                    # not over 5
-                    print()
-                    while True:
-                        advisor_id = input('Insert ID of the faculty you want to be supervised: ')
-                        if advisor_id in available_id:
-                            break
-                        print('Incorrect ID. Please try again')
-                    print(f'Are you sure to send a request to {identify(advisor_id)}?')
-                    if confirm():
-                        new_request = {'ID': project_id,
-                                       'advisor': advisor_id,
-                                       'response': '',
-                                       'response_date': ''}
-                        advisor_pending_request.table.append(new_request)
-                        print('Sending confirmed')
-                    else:
-                        print('Sending canceled')
-            # can't send if 1 advisor or 1 request
+                your_project.send_advisor_request()
         elif choice == '6':
             project_id = call_project_id(lead_id)[0]
-            if count_requests(member_pending_request, project_id) <= 0:
-                print('You have no member pending request')
-            else:
-                print('Pending member request')
-                print()
-                available_id = []
-                for request in member_pending_request.table:
-                    if isinproject(project_id, request) and request['response'] == '':
-                        print(f"{request['member']:^9} | "
-                              f"{identify(request['member']):<18} | "
-                              f"Waiting...")
-                        available_id.append(request['member'])
-                print()
-                while True:
-                    member_id = input('Insert ID of the person you want to cancel: ')
-                    if member_id in available_id:
-                        break
-                    print('Incorrect ID. Please try again')
-                print('Are you sure to cancel the request?')
-                if confirm():
-                    member_pending_request.table.remove({
-                        'ID': project_id,
-                        'member': member_id,
-                        'response': '',
-                        'response_date': ''})
-                    print('Cancelling confirmed')
-                else:
-                    print('Cancelling canceled')
-        # cancel members requests
+            your_project = Project(project_id)
+            your_project.cancel_member_request()
         elif choice == '7':
             project_id = call_project_id(lead_id)[0]
-            if count_requests(advisor_pending_request, project_id) <= 0:
-                print('You have no advisor pending request')
-            else:
-                print('Pending advisor request')
-                print()
-                available_id = []
-                for request in advisor_pending_request.table:
-                    if isinproject(project_id, request) and request['response'] == '':
-                        print(f"{request['advisor']:^9} | "
-                              f"{identify(request['advisor']):<18} | "
-                              f"Waiting...")
-                        available_id.append(request['advisor'])
-                print()
-                while True:
-                    advisor_id = input('Insert ID of the faculty you want to cancel: ')
-                    if advisor_id in available_id:
-                        break
-                    print('Incorrect ID. Please try again')
-                print('Are you sure to cancel the request?')
-                if confirm():
-                    advisor_pending_request.table.remove(
-                        {'ID': project_id,
-                         'advisor': advisor_id,
-                         'response': '',
-                         'response_date': ''})
-                    print('Cancelling confirmed')
-                else:
-                    print('Cancelling canceled')
-        # Cancel advisor requests
+            your_project = Project(project_id)
+            your_project.cancel_advisor_request()
         elif choice == '8':
             project_id = call_project_id(lead_id)[0]
             your_project = Project(project_id)
-            if your_project.status == 'Initiate':
-                your_project.show_proposal()
-                print('Are you sure to send the request? (Proposal evaluation)')
-                if confirm():
-                    your_project.status = 'Planned'
-                    your_project.update()
-                    # change project status
-                    print('Sending canceled')
-                else:
-                    print('Sending canceled')
-            elif your_project.status == 'In progress':
-                your_project.show_report()
-                print('Are you sure to send the request? (Report evaluation)')
-                if confirm():
-                    your_project.status = 'Reported'
-                    your_project.update()
-                    # change project status
-                    print('Sending canceled')
-                else:
-                    print('Sending canceled')
-            elif your_project.status == 'Not started':
-                print('Project has no advisor.')
-            elif your_project.status in ('Planned', 'Reported'):
-                print('The request is already sent.')
-            else:
-                print('Cannot send any more report.')
-            # cannot if already waiting for evaluation
+            your_project.evaluation_request()
         else:
             print('Incorrect input. Try again')
         print()
@@ -1015,20 +1013,17 @@ def admin():
             for _project in project.table:
                 print(_project)
         elif choice == '2':
-            table = project
-            admin_modify(table)
+            project.admin_modify()
         elif choice == '3':
             for request in member_pending_request.table:
                 print(request)
         elif choice == '4':
-            table = member_pending_request
-            admin_modify(table)
+            member_pending_request.admin_modify()
         elif choice == '5':
             for request in advisor_pending_request.table:
                 print(request)
         elif choice == '6':
-            table = advisor_pending_request
-            admin_modify(table)
+            advisor_pending_request.admin_modify()
         else:
             print('Incorrect input. Try again')
         print()

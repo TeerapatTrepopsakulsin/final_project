@@ -133,3 +133,24 @@ class Table:
             if item['ID'] == id_value:
                 return item[attribute]
         return None
+
+    def admin_modify(self):
+        """
+        function for admin role, especially modifying each table data
+        :param self: name of csv file
+        """
+        for request in self.table:
+            print(request)
+        project_id = input('Input project ID to modify ')
+        attribute = input('Input attribute that you want to modify ')
+        print(f'{project_id} {attribute} is currently {self.get_row(project_id, attribute)}.')
+        new_value = input('Insert new value ')
+        print('Do you want to modify?')
+        print()
+        print('Press only Enter to Confirm')
+        choice = input('Press other key to Cancel ')
+        if choice == "":
+            self.set_row(project_id, attribute, new_value)
+            print('Modifying completed')
+        else:
+            print('Modifying canceled')
